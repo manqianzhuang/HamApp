@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="../../../../../../../layout/compose-model-1617175533992.xml" value="0.335" />
+        <entry key="../../../../../../../layout/compose-model-1617786420055.xml" value="0.375" />
+        <entry key="../../../../../../../layout/compose-model-1617870126248.xml" value="0.375" />
+        <entry key="../../../../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/drawable_horizontal_progressbar.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_add.xml" value="0.3802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_arrow_more.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_author.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_back.xml" value="0.3802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_close.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.3802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_search.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_share.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_star_border.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_time.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/icon_back.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/icon_back_write.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/xml/network_security_config.xml" value="0.1712707182320442" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

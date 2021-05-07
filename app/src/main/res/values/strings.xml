@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">HamCompose</string>
+    <string name="web_view_name">WebView</string>
+</resources>

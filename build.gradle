@@ -1,0 +1,32 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext.composeVersion = "1.0.0-beta04"
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+//        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+//        maven { url "https://androidx.dev/snapshots/builds/0.7.2-SNAPSHOT/artifacts/repository/" }
+
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.0.0-alpha14"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.31"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:2.28.1-alpha"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle.kts files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

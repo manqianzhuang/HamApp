@@ -25,6 +25,9 @@ import com.mm.hamcompose.R
 import com.mm.hamcompose.ui.RouteActions
 import com.mm.hamcompose.ui.widget.HamTopBar
 
+/**
+ * 看妹纸 页面
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GirlPhotoPage(

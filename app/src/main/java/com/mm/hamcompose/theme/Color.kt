@@ -9,6 +9,7 @@ val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 
 
+val splashText = Color(0x25000000)
 val white = Color(0xFFFFFFFF)
 val white1 = Color(0xFFF7F7F7)
 val white2 = Color(0xFFEDEDED)

@@ -12,8 +12,9 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
+//这里使用了 ApplicationComponent，因此 HttpModule 绑定到 Application 的生命周期
 @Module
-@InstallIn(ApplicationComponent::class)//这里使用了 ApplicationComponent，因此 HttpModule 绑定到 Application 的生命周期
+@InstallIn(ApplicationComponent::class)
 class HttpModule {
 
     @Singleton
@@ -24,10 +25,9 @@ class HttpModule {
     @Provides
     fun provideOkHttp(): OkHttpClient = Api.okHttp
 
+    @Singleton
     @Provides
-    fun provideLogInterceptor(): Interceptor {
-        return LogInterceptor()
-    }
+    fun provideLogInterceptor(): Interceptor = LogInterceptor()
 
 //    @Singleton
 //    @Provides

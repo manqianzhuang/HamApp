@@ -46,7 +46,7 @@ fun ProjectDetailPage(parent: ParentBean, actions: RouteActions) {
     viewModel.setCid(parent.id)
     viewModel.refresh()
 
-    Box {
+    Box(Modifier.background(HamTheme.colors.background)) {
         val projects = viewModel.pagingData.value?.collectAsLazyPagingItems()
         val refreshing = viewModel.isRefreshing.observeAsState()
         val swipeRefreshState = rememberSwipeRefreshState(refreshing.value!!)

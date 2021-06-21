@@ -8,7 +8,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 import javax.net.ssl.*
 
 /**
@@ -55,9 +54,9 @@ object Api {
     private fun createSSLSocketFactory(): SSLSocketFactory {
         lateinit var ssfFactory: SSLSocketFactory
         try {
-            val sc = SSLContext.getInstance("TLS")
-            sc.init(null,  arrayOf(TrustAllCerts()), SecureRandom());
-            ssfFactory = sc.socketFactory
+            val sslFactory = SSLContext.getInstance("TLS")
+            sslFactory.init(null,  arrayOf(TrustAllCerts()), SecureRandom());
+            ssfFactory = sslFactory.socketFactory
         } catch (e: Exception) {
             print("SSL错误：${e.message}")
         }
@@ -66,7 +65,7 @@ object Api {
 
 }
 
-class TrustAllNameVerifier: HostnameVerifier{
+class TrustAllNameVerifier: HostnameVerifier {
     @SuppressLint("BadHostnameVerifier")
     override fun verify(hostname: String?, session: SSLSession?): Boolean = true
 }
@@ -75,12 +74,10 @@ class TrustAllNameVerifier: HostnameVerifier{
 class TrustAllCerts : X509TrustManager {
 
     @SuppressLint("TrustAllX509TrustManager")
-    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
-    }
+    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
 
     @SuppressLint("TrustAllX509TrustManager")
-    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
-    }
+    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
 
     override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
 }

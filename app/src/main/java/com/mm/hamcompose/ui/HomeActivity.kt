@@ -1,23 +1,24 @@
 package com.mm.hamcompose.ui
 
 import android.os.Bundle
-import androidx.activity.OnBackPressedCallback
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
-import com.mm.hamcompose.R
-import com.mm.hamcompose.isMainStack
 import com.mm.hamcompose.ui.page.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.system.exitProcess
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            HomeEntry(onBackPressedDispatcher)
-        }
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
+            WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+        )
+        setContent { HomeEntry(onBackPressedDispatcher) }
     }
 
     var cacheMills: Long = 0L

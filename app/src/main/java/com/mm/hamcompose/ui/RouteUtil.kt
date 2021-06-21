@@ -18,10 +18,8 @@ package com.mm.hamcompose.ui
 
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
-import com.blankj.utilcode.util.LogUtils
 import com.mm.hamcompose.bean.ParentBean
 import com.mm.hamcompose.bean.WebData
-import com.mm.hamcompose.isMainStack
 import com.mm.hamcompose.util.Navigator
 import kotlinx.parcelize.Parcelize
 
@@ -29,6 +27,7 @@ import kotlinx.parcelize.Parcelize
  * Models the screens in the app and any arguments they require.
  */
 sealed class Destination : Parcelable {
+
     @Parcelize
     object Home : Destination()
 
@@ -61,6 +60,9 @@ sealed class Destination : Parcelable {
 
 }
 
+/**
+ * 路由名称
+ */
 object HamRouter{
     const val systemCategory = "system_category"
     const val projectDetail = "project_detail"
@@ -73,6 +75,7 @@ object HamRouter{
 
 /**
  * Models the navigation actions in the app.
+ * 导航到指定页面
  */
 class RouteActions(navigator: Navigator<Destination>) {
 

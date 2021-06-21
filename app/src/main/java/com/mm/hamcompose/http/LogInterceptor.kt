@@ -20,22 +20,28 @@ class LogInterceptor @Inject constructor() : Interceptor {
     @RequiresApi(Build.VERSION_CODES.N)
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response? {
-        val request = chain.request()
-        if (isNull(request)) {
-            LogUtils.e("request is null")
-            Response.Builder().build()
+        return try {
+            val request = chain.request()
+            if (isNull(request)) {
+                LogUtils.e("request is null")
+                Response.Builder().build()
+            }
+            val httpMethod = request.method()
+            val httpUrl = request.url()
+            val httpHeader = request.headers()
+            print("METHOD:$httpMethod\n URL:$httpUrl\n HEAD:$httpHeader")
+            val response = chain.proceed(request)
+            if (isNull(response)) {
+                print("LogInterceptor's response is null")
+            }
+            val type = response.body()!!.contentType()
+            val content = response.body()!!.string()
+            print("请求响应：\n$content")
+            response.newBuilder().body(ResponseBody.create(type, content)).build()
+        } catch (e: Exception) {
+            LogUtils.e(e.message)
+            null
         }
-        LogUtils.w(
-                "请求方式:${request.method()} \n" +
-                "URL:${request.url()} \n" +
-                "请求头部:${GsonUtils.toJson(request.headers())}")
-        val response = chain.proceed(request)
-        if (isNull(response))
-            LogUtils.e("LogInterceptor's response is null")
-        val type = response.body()!!.contentType()
-        val content = response.body()!!.string()
-        LogUtils.i("请求响应：\n$content")
-        return response.newBuilder().body(ResponseBody.create(type, content)).build()
     }
 
 }

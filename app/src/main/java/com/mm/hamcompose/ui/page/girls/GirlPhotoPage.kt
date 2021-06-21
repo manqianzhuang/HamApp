@@ -3,6 +3,7 @@ package com.mm.hamcompose.ui.page.girls
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -22,6 +23,7 @@ import com.blankj.utilcode.util.LogUtils
 import com.google.accompanist.glide.rememberGlidePainter
 import com.google.accompanist.imageloading.ImageLoadState
 import com.mm.hamcompose.R
+import com.mm.hamcompose.theme.HamTheme
 import com.mm.hamcompose.ui.RouteActions
 import com.mm.hamcompose.ui.widget.HamTopBar
 
@@ -46,7 +48,8 @@ fun GirlPhotoPage(
         LazyVerticalGrid(
             cells = GridCells.Fixed(2),
             contentPadding = PaddingValues(10.dp),
-            state = gridState
+            state = gridState,
+            modifier = Modifier.background(HamTheme.colors.background)
         ) {
             items(girls!!) { item->
                 PhotoItem(item.url)

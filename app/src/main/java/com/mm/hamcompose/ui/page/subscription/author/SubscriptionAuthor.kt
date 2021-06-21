@@ -43,8 +43,7 @@ fun SubscriptionAuthorPage(
     viewModel.setPublicId(parent.id)
     viewModel.start()
 
-    Box {
-
+    Box(Modifier.background(HamTheme.colors.background)) {
         val articles = viewModel.publicData.value?.collectAsLazyPagingItems()
         val refreshing = viewModel.isRefreshing.observeAsState()
         val swipeRefreshState = rememberSwipeRefreshState(refreshing.value!!)

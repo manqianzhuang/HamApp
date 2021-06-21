@@ -11,7 +11,6 @@ import retrofit2.http.*
 interface HttpService {
 
     companion object {
-        //正式接口
         const val url = "https://www.wanandroid.com/"
     }
 

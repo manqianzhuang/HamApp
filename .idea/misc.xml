@@ -6,6 +6,7 @@
         <entry key="../../../../../../../layout/compose-model-1617175533992.xml" value="0.335" />
         <entry key="../../../../../../../layout/compose-model-1617786420055.xml" value="0.375" />
         <entry key="../../../../../../../layout/compose-model-1617870126248.xml" value="0.375" />
+        <entry key="../../../../../../../layout/compose-model-1620464467820.xml" value="0.5" />
         <entry key="../../../../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/drawable_horizontal_progressbar.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.3802083333333333" />
@@ -13,7 +14,9 @@
         <entry key="app/src/main/res/drawable/ic_author.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/drawable/ic_back.xml" value="0.3802083333333333" />
         <entry key="app/src/main/res/drawable/ic_close.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_drawer.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.3802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_menu_welfare.xml" value="0.15092592592592594" />
         <entry key="app/src/main/res/drawable/ic_search.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/drawable/ic_share.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/drawable/ic_star_border.xml" value="0.37112353838332485" />

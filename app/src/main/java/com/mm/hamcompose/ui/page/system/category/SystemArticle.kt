@@ -46,7 +46,7 @@ fun SystemArticlePage(
 ) {
     viewModel.setId(parent.id)
 
-    Box {
+    Box(Modifier.background(HamTheme.colors.background)) {
         var isShowInput by remember { mutableStateOf(false) }
         var author by remember { mutableStateOf(EMPTY_TIPS) }
         val articles = viewModel.articles.value?.collectAsLazyPagingItems()

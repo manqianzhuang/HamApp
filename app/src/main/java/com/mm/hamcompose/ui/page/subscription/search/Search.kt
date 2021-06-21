@@ -44,7 +44,7 @@ fun SubscriptionSearch(
     val searchResult = viewModel.searchResult.value?.collectAsLazyPagingItems()
     val key = remember { mutableStateOf("") }
 
-    Box {
+    Box(Modifier.background(HamTheme.colors.background)) {
 
         val refreshing = viewModel.isRefreshing.observeAsState()
         val swipeRefreshState = rememberSwipeRefreshState(refreshing.value!!)

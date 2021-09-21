@@ -7,28 +7,56 @@
         <entry key="../../../../../../../layout/compose-model-1617786420055.xml" value="0.375" />
         <entry key="../../../../../../../layout/compose-model-1617870126248.xml" value="0.375" />
         <entry key="../../../../../../../layout/compose-model-1620464467820.xml" value="0.5" />
+        <entry key="../../../../../../../layout/compose-model-1631246999336.xml" value="0.41944444444444445" />
+        <entry key="../../../../../../../layout/compose-model-1631247931222.xml" value="0.335016835016835" />
+        <entry key="../../../../../../../layout/compose-model-1631248057332.xml" value="0.41944444444444445" />
+        <entry key="../../../../../../../layout/compose-model-1631266778637.xml" value="0.3559928443649374" />
+        <entry key="../../../../../../../layout/compose-model-1631270820458.xml" value="0.335016835016835" />
+        <entry key="../../../../../../../layout/compose-model-1631291767536.xml" value="0.335" />
+        <entry key="../../../../../../../layout/compose-model-1631373937553.xml" value="0.3559928443649374" />
+        <entry key="../../../../../../../layout/compose-model-1631430390607.xml" value="0.1" />
+        <entry key="../../../../../../../layout/compose-model-1631516112195.xml" value="0.1" />
+        <entry key="../../../../../../../layout/compose-model-1631758509919.xml" value="0.3559928443649374" />
+        <entry key="../../../../../../../layout/compose-model-1631968438511.xml" value="0.3559928443649374" />
+        <entry key="../../../../../../../layout/compose-model-1631971754990.xml" value="0.3559928443649374" />
+        <entry key="../../../../../../../layout/compose-model-1631980194126.xml" value="0.3559928443649374" />
+        <entry key="../../../../../../../layout/compose-model-1632026626119.xml" value="0.3559928443649374" />
+        <entry key="../../../../../../../layout/compose-model-1632037070385.xml" value="0.3559928443649374" />
+        <entry key="../../../../../../../layout/compose-model-1632198182520.xml" value="0.275" />
         <entry key="../../../../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/drawable_horizontal_progressbar.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.3802083333333333" />
         <entry key="app/src/main/res/drawable/ic_arrow_more.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/drawable/ic_author.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/drawable/ic_back.xml" value="0.3802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_camera.xml" value="0.3953013278855976" />
         <entry key="app/src/main/res/drawable/ic_close.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_community.xml" value="0.3953013278855976" />
+        <entry key="app/src/main/res/drawable/ic_data.xml" value="0.3953013278855976" />
+        <entry key="app/src/main/res/drawable/ic_delete.xml" value="0.3953013278855976" />
         <entry key="app/src/main/res/drawable/ic_drawer.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_feedback.xml" value="0.3953013278855976" />
+        <entry key="app/src/main/res/drawable/ic_history_record.xml" value="0.3953013278855976" />
+        <entry key="app/src/main/res/drawable/ic_hot.xml" value="0.3953013278855976" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.3802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_menu_settings.xml" value="0.3768518518518518" />
         <entry key="app/src/main/res/drawable/ic_menu_welfare.xml" value="0.15092592592592594" />
+        <entry key="app/src/main/res/drawable/ic_message.xml" value="0.3953013278855976" />
+        <entry key="app/src/main/res/drawable/ic_ranking.xml" value="0.3953013278855976" />
         <entry key="app/src/main/res/drawable/ic_search.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/drawable/ic_share.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_star.xml" value="0.3768518518518518" />
         <entry key="app/src/main/res/drawable/ic_star_border.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/ic_theme.xml" value="0.3953013278855976" />
         <entry key="app/src/main/res/drawable/ic_time.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/drawable/icon_back.xml" value="0.37112353838332485" />
+        <entry key="app/src/main/res/drawable/icon_back_white.xml" value="0.212" />
         <entry key="app/src/main/res/drawable/icon_back_write.xml" value="0.37112353838332485" />
         <entry key="app/src/main/res/xml/network_security_config.xml" value="0.1712707182320442" />
       </map>
     </option>
   </component>
-  <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Embedded JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

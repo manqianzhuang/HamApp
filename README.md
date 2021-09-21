@@ -1,39 +1,39 @@
-# WanandoidCompose版本
+# WanAndroidCompose版本
 
 #### 介绍
-此Wanandroid app客户端项目使用Android最新技术Jetpack Compose完成，遵循MVVM架构思路，以下为本项目用到的框架：
-compose
-viewModel+liveData
-retrofit+okhttp3
-coroutine以及其flow框架
-paging3
-room
-accompanist
-hilt
+此WanAndroid app客户端项目使用Android官方的Jetpack Compose完成，
+遵循MVVM架构思路，以下为本项目用到的框架：
+jetpack compose, viewModel, retrofit, okhttp3, coroutine/flow, paging3，
+room, accompanist, hilt, gson, glide/picasso, navigation.
+
+项目模块： 
+首页（推荐、广场、项目、问答），
+分类（体系、导航、公众号，分享文章），
+收藏（网址、文章），
+我的（我的文章、历史记录、积分排行、添加文章、设置、消息、主题色、清缓存等）
+
 
 #### 软件架构
-Mvvm, AndroidStudio Preview版本
+Mvvm, Android Studio ArcticFox
 
 
-#### 安装教程
+#### 关于项目
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  项目地址： https://github.com/manqianzhuang/HamApp.git
+2.  联系方式： ganzhuangman@gmail.com
+3.  API提供： 鸿洋（WanAndroid开放api）
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-4.  新建 Pull Request
+1.  此项目仅提供学习用途，未经允许不得用于商业项目
+2.  感谢鸿洋大佬提供的WanAndroid网站，让我们可以学习到很多的android/flutter/前端等技术
+3.  欢迎各位提PR，我会抽时间不断优化代码和修复bug。如有请教，请邮件联系
 
+#### TODO
+1. 添加动画 
+2. 优化键盘的触发 = DONE
+3. 收藏时更新Item状态 
+4. 添加更换主题色  = DONE
+5. 添加Loading
+6. 完成我的消息开发
 
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)

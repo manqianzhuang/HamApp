@@ -9,23 +9,21 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.blankj.utilcode.util.LogUtils
 import com.google.accompanist.glide.rememberGlidePainter
 import com.google.accompanist.imageloading.ImageLoadState
 import com.mm.hamcompose.R
 import com.mm.hamcompose.theme.HamTheme
-import com.mm.hamcompose.ui.RouteActions
-import com.mm.hamcompose.ui.widget.HamTopBar
+import com.mm.hamcompose.ui.route.RouteUtils.back
+import com.mm.hamcompose.ui.widget.HamToolBar
 
 /**
  * 看妹纸 页面
@@ -33,18 +31,18 @@ import com.mm.hamcompose.ui.widget.HamTopBar
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GirlPhotoPage(
-    actions: RouteActions,
-    viewModel: GirlPhotoViewModel = viewModel(GirlPhotoViewModel::class.java)
+    navCtrl: NavHostController,
+    viewModel: GirlPhotoViewModel = hiltViewModel()
 ) {
 
     viewModel.start()
 //    val girls = viewModel.pagingData.value?.collectAsLazyPagingItems()
-    val girls by viewModel.photos.observeAsState()
+    val girls by viewModel.photoData.observeAsState()
     val gridState = rememberLazyListState()
     var lastIndex by remember { mutableStateOf(-1) }
 
     Column {
-        HamTopBar(title = "福利", onBack = actions.backPress)
+        HamToolBar(title = "福利", onBack = { navCtrl.back() })
         LazyVerticalGrid(
             cells = GridCells.Fixed(2),
             contentPadding = PaddingValues(10.dp),
@@ -55,7 +53,9 @@ fun GirlPhotoPage(
                 PhotoItem(item.url)
             }
             val current = gridState.firstVisibleItemIndex
-            LogUtils.e("当前=${gridState.firstVisibleItemIndex}，最后=${lastIndex}  是否加载下一页：${gridState.firstVisibleItemIndex%10==5}")
+            LogUtils.e(
+                "当前=${gridState.firstVisibleItemIndex}，最后=${lastIndex}  " +
+                        "是否加载下一页：${gridState.firstVisibleItemIndex%10==5}")
             if (current%10==5 && current > lastIndex) {
                 viewModel.loadMore()
             }

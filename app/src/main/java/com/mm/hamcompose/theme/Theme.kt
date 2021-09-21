@@ -2,11 +2,14 @@ package com.mm.hamcompose.theme
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import com.blankj.utilcode.util.SPUtils
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+
+const val THEME_COLOR_KEY = "theme_color"
+const val THEME_STYLE_KEY = "theme_style"
 
 //夜色主题
 private val DarkColorPalette = HamColors(
@@ -14,67 +17,40 @@ private val DarkColorPalette = HamColors(
     background = black2,
     listItem = black3,
     divider = black4,
-    buttonBg = black4,
-    chatPage = black2,
     textPrimary = white4,
-    textPrimaryMe = black6,
     textSecondary = grey1,
-    icon = white5,
-    iconCurrent = green3,
-    badge = red1,
-    onBadge = white,
-    bubbleMe = green2,
-    bubbleOthers = black5,
-    textFieldBackground = black7,
-    more = grey5,
-    chatPageBgAlpha = 0f,
+    mainColor = white,
+    icon = white4,
+    info = info,
+    warn = warn,
+    success = green3,
+    error =red2,
+    primaryBtnBg = black1,
+    secondBtnBg = white1,
+    hot = red,
 )
 
 //白天主题
  private val LightColorPalette = HamColors(
-    themeUi = Teal200,
+    themeUi = themeColors[0],
     background = white2,
     listItem = white,
     divider = white3,
-    buttonBg = white3,
-    chatPage = white2,
     textPrimary = black3,
-    textPrimaryMe = black3,
     textSecondary = grey1,
-    icon = black,
-    iconCurrent = green3,
-    badge = red1,
-    onBadge = white,
-    bubbleMe = green1,
-    bubbleOthers = white,
-    textFieldBackground = white,
-    more = grey4,
-    chatPageBgAlpha = 0f,
+    mainColor = white,
+    icon = white4,
+    info = info,
+    warn = warn,
+    success = green3,
+    error = red2,
+    primaryBtnBg = themeColors[0],
+    secondBtnBg = white3,
+    hot = red,
 )
-
-//新年主题
-private val NewYearColorPalette = HamColors(
-    themeUi = red4,
-    background = red5,
-    listItem = red2,
-    divider = red3,
-    buttonBg = red3,
-    chatPage = red5,
-    textPrimary = white,
-    textPrimaryMe = black6,
-    textSecondary = grey2,
-    icon = white5,
-    iconCurrent = green3,
-    badge = yellow1,
-    onBadge = black3,
-    bubbleMe = green2,
-    bubbleOthers = red6,
-    textFieldBackground = red7,
-    more = red8,
-    chatPageBgAlpha = 1f,
-)
-
-val LocalHamColors = compositionLocalOf { LightColorPalette }
+var LocalHamColors = compositionLocalOf {
+    LightColorPalette
+}
 
 @Stable
 object HamTheme {
@@ -83,7 +59,7 @@ object HamTheme {
         get() = LocalHamColors.current
 
     enum class Theme {
-        Light, Dark, NewYear
+        Light, Dark
     }
 }
 
@@ -93,114 +69,108 @@ class HamColors(
     background: Color,
     listItem: Color,
     divider: Color,
-    buttonBg: Color,
-    chatPage: Color,
     textPrimary: Color,
-    textPrimaryMe: Color,
     textSecondary: Color,
+    mainColor: Color,
     icon: Color,
-    iconCurrent: Color,
-    badge: Color,
-    onBadge: Color,
-    bubbleMe: Color,
-    bubbleOthers: Color,
-    textFieldBackground: Color,
-    more: Color,
-    chatPageBgAlpha: Float,
+    info: Color,
+    warn: Color,
+    success: Color,
+    error: Color,
+    primaryBtnBg: Color,
+    secondBtnBg: Color,
+    hot: Color,
 ) {
     var themeUi: Color by mutableStateOf(themeUi)
-        private set
+        internal set
     var background: Color by mutableStateOf(background)
         private set
     var listItem: Color by mutableStateOf(listItem)
         private set
     var divider: Color by mutableStateOf(divider)
         private set
-    var buttonBg: Color by mutableStateOf(buttonBg)
-        private set
-    var chatPage: Color by mutableStateOf(chatPage)
-        private set
     var textPrimary: Color by mutableStateOf(textPrimary)
-        private set
-    var textPrimaryMe: Color by mutableStateOf(textPrimaryMe)
-        private set
+        internal set
     var textSecondary: Color by mutableStateOf(textSecondary)
         private set
+    var mainColor: Color by mutableStateOf(mainColor)
+        internal set
     var icon: Color by mutableStateOf(icon)
         private set
-    var iconCurrent: Color by mutableStateOf(iconCurrent)
+    var info: Color by mutableStateOf(info)
         private set
-    var badge: Color by mutableStateOf(badge)
+    var warn: Color by mutableStateOf(warn)
         private set
-    var onBadge: Color by mutableStateOf(onBadge)
+    var success: Color by mutableStateOf(success)
         private set
-    var bubbleMe: Color by mutableStateOf(bubbleMe)
+    var error: Color by mutableStateOf(error)
         private set
-    var bubbleOthers: Color by mutableStateOf(bubbleOthers)
+    var primaryBtnBg: Color by mutableStateOf(primaryBtnBg)
+        internal set
+    var secondBtnBg: Color by mutableStateOf(secondBtnBg)
         private set
-    var textFieldBackground: Color by mutableStateOf(textFieldBackground)
-        private set
-    var more: Color by mutableStateOf(more)
-        private set
-    var chatPageBgAlpha: Float by mutableStateOf(chatPageBgAlpha)
+    var hot: Color by mutableStateOf(hot)
         private set
 }
 
 
+
 @Composable
-fun HamTheme(theme: HamTheme.Theme = HamTheme.Theme.Light, content: @Composable () -> Unit) {
+fun HamTheme(
+    theme: HamTheme.Theme = HamTheme.Theme.Light,
+    content: @Composable () -> Unit
+) {
 
     val targetColors = when(theme) {
-        HamTheme.Theme.Light -> LightColorPalette
+        HamTheme.Theme.Light -> {
+            val index = SPUtils.getInstance().getInt(THEME_COLOR_KEY,0)
+            LightColorPalette.themeUi = themeColors[index]
+            LightColorPalette.primaryBtnBg = themeColors[index]
+            LightColorPalette
+        }
         HamTheme.Theme.Dark -> DarkColorPalette
-        HamTheme.Theme.NewYear -> NewYearColorPalette
     }
 
     val themeUi = animateColorAsState(targetColors.themeUi, TweenSpec(600))
     val background = animateColorAsState(targetColors.background, TweenSpec(600))
     val listItem = animateColorAsState(targetColors.listItem, TweenSpec(600))
     val divider = animateColorAsState(targetColors.divider, TweenSpec(600))
-    val buttonBg = animateColorAsState(targetColors.buttonBg, TweenSpec(600))
-    val chatPage = animateColorAsState(targetColors.chatPage, TweenSpec(600))
     val textPrimary = animateColorAsState(targetColors.textPrimary, TweenSpec(600))
-    val textPrimaryMe = animateColorAsState(targetColors.textPrimaryMe, TweenSpec(600))
     val textSecondary = animateColorAsState(targetColors.textSecondary, TweenSpec(600))
+    val mainColor = animateColorAsState(targetColors.mainColor, TweenSpec(600))
     val icon = animateColorAsState(targetColors.icon, TweenSpec(600))
-    val iconCurrent = animateColorAsState(targetColors.iconCurrent, TweenSpec(600))
-    val badge = animateColorAsState(targetColors.badge, TweenSpec(600))
-    val onBadge = animateColorAsState(targetColors.onBadge, TweenSpec(600))
-    val bubbleMe = animateColorAsState(targetColors.bubbleMe, TweenSpec(600))
-    val bubbleOthers = animateColorAsState(targetColors.bubbleOthers, TweenSpec(600))
-    val textFieldBackground = animateColorAsState(targetColors.textFieldBackground, TweenSpec(600))
-    val more = animateColorAsState(targetColors.more, TweenSpec(600))
-    val chatPageBgAlpha = animateFloatAsState(targetColors.chatPageBgAlpha, TweenSpec(600))
+    val info = animateColorAsState(targetColors.info, TweenSpec(600))
+    val warn = animateColorAsState(targetColors.warn, TweenSpec(600))
+    val success = animateColorAsState(targetColors.success, TweenSpec(600))
+    val error = animateColorAsState(targetColors.error, TweenSpec(600))
+    val primaryBtnBg = animateColorAsState(targetColors.primaryBtnBg, TweenSpec(600))
+    val secondBtnBg = animateColorAsState(targetColors.secondBtnBg, TweenSpec(600))
+    val hot = animateColorAsState(targetColors.hot, TweenSpec(600))
     val hamColors = HamColors(
         themeUi = themeUi.value,
         background = background.value,
         listItem = listItem.value,
         divider = divider.value,
-        buttonBg = buttonBg.value,
-        chatPage = chatPage.value,
         textPrimary = textPrimary.value,
-        textPrimaryMe = textPrimaryMe.value,
         textSecondary = textSecondary.value,
+        mainColor = mainColor.value,
         icon = icon.value,
-        iconCurrent = iconCurrent.value,
-        badge = badge.value,
-        onBadge = onBadge.value,
-        bubbleMe = bubbleMe.value,
-        bubbleOthers = bubbleOthers.value,
-        textFieldBackground = textFieldBackground.value,
-        more = more.value,
-        chatPageBgAlpha = chatPageBgAlpha.value,
+        primaryBtnBg = primaryBtnBg.value,
+        secondBtnBg = secondBtnBg.value,
+        info = info.value,
+        warn = warn.value,
+        success = success.value,
+        error = error.value,
+        hot = hot.value
     )
 
-    val uiCtrl = rememberSystemUiController()
-    SideEffect {
-        uiCtrl.setStatusBarColor(hamColors.themeUi)
-        uiCtrl.setNavigationBarColor(hamColors.themeUi)
-        uiCtrl.setSystemBarsColor(hamColors.themeUi)
-    }
+    val systemUiCtrl = rememberSystemUiController()
+    //SideEffect用于屏蔽state，取消监听
+    //SideEffect {
+        systemUiCtrl.setStatusBarColor(hamColors.themeUi)
+        systemUiCtrl.setNavigationBarColor(hamColors.themeUi)
+        systemUiCtrl.setSystemBarsColor(hamColors.themeUi)
+    //}
 
     ProvideWindowInsets {
         CompositionLocalProvider(LocalHamColors provides hamColors, content = content)

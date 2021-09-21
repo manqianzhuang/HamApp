@@ -1,4 +1,26 @@
 <resources>
     <string name="app_name">HamCompose</string>
     <string name="web_view_name">WebView</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="home">首页</string>
+    <string name="category">分类</string>
+    <string name="collection">收藏</string>
+    <string name="profile">我的</string>
+    <string name="title">标题</string>
+    <string name="author">作者</string>
+    <string name="website">网站</string>
+    <string name="link">链接</string>
+    <string name="user">用户</string>
+    <string name="save">保存</string>
+    <string name="login">登录</string>
+    <string name="register">注册</string>
+    <string name="hint_text_title">请输入标题</string>
+    <string name="hint_text_name">请输入名称</string>
+    <string name="hint_text_content">请输入内容</string>
+    <string name="hint_text_username">请输入用户名</string>
+    <string name="hint_text_account">请输入帐号</string>
+    <string name="hint_text_password">请输入密码</string>
+    <string name="hint_text_repassword">请再次输入密码</string>
+    <string name="hint_text_invite_code">请输入邀请码</string>
+    <string name="hint_text_website_url">请输入网址</string>
 </resources>

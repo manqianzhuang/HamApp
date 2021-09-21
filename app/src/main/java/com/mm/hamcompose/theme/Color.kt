@@ -2,12 +2,31 @@ package com.mm.hamcompose.theme
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
+import androidx.compose.ui.res.colorResource
+import com.mm.hamcompose.HamApp
+import com.mm.hamcompose.R
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val Transparent = Color(0x00000000)
 
+val themeColors = arrayOf(
+    Color(HamApp.CONTEXT.resources.getColor(R.color.primary)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.purple_200)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.purple_500)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.purple_700)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.teal_700)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.navajo_white)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.medium_blue)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.hot_pink)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.chocolate)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.dark_orange)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.orange)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.gold)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.yellow)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.fire_red)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.light_green)),
+    Color(HamApp.CONTEXT.resources.getColor(R.color.sprint_green)),
+    //Color(HamApp.CONTEXT.resources.getColor(R.color.azure)),
+)
 
 val splashText = Color(0x25000000)
 val white = Color(0xFFFFFFFF)
@@ -32,6 +51,7 @@ val grey5 = Color(0xFF5E5E5E)
 val green1 = Color(0xFFB0EB6E)
 val green2 = Color(0xFF6DB476)
 val green3 = Color(0xFF67BF63)
+val red = Color(0xFFFF0000)
 val red1 = Color(0xFFDF5554)
 val red2 = Color(0xFFDD302E)
 val red3 = Color(0xFFF77B7A)
@@ -41,3 +61,6 @@ val red6 = Color(0xFFF74D4B)
 val red7 = Color(0xFFDC514E)
 val red8 = Color(0xFFCBC7BF)
 val yellow1 = Color(0xFFF6CA23)
+val blue = Color(0xFF0000FF)
+val info = Color(0xFF305A85)
+val warn = Color(0xFFD87831)

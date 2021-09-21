@@ -1,25 +1,54 @@
 package com.mm.hamcompose.ui.page.base
 
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<T> : ViewModel(), IViewContract {
+abstract class BaseViewModel<T> : ViewModel() {
 
-    //数据列表
-    var list = MutableLiveData(mutableListOf<T>())
+    //分类列表（装非分页加载的容器）
+    var list = mutableStateOf(mutableListOf<T>())
+
+    var currentListIndex = mutableStateOf(0)
+
+    private var _isInited = mutableStateOf(false)
+
+    private val isInited: Boolean
+        get() = _isInited.value
+
+    private fun requestInitialized() {
+        _isInited.value = true
+    }
+
+    fun resetListIndex() {
+        currentListIndex.value = 0
+    }
+
+    fun resetInitState() {
+        _isInited.value = false
+    }
 
     fun async(block: suspend ()-> Unit) {
-        viewModelScope.launch {
-            block()
-        }
+        viewModelScope.launch { block() }
     }
 
     abstract fun start()
 
-    override fun stopLoading() { }
+    fun initThat(block: () -> Unit) {
+        if (!isInited) {
+            block.invoke()
+            requestInitialized()
+        }
+    }
 
-    override fun loadContent() { }
+    fun savePosition(index: Int) {
+        currentListIndex.value = index
+        println("## save position = $index ##")
+    }
+
+    open fun stopLoading() { }
+
+    open fun loadContent() { }
 
 }

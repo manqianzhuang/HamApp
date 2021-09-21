@@ -1,35 +1,43 @@
 package com.mm.hamcompose.ui.widget
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.mm.hamcompose.theme.HamTheme
+import com.mm.hamcompose.theme.*
 
 @Composable
-fun LargeTitle(title: String, modifier: Modifier = Modifier) {
+fun LargeTitle(title: String, modifier: Modifier = Modifier, color: Color? = null) {
     Title(
         title = title,
         modifier = modifier,
-        fontSize = 20.sp,
-        color = HamTheme.colors.textPrimary,
+        fontSize = H3,
+        color = color ?: HamTheme.colors.textPrimary,
         fontWeight = FontWeight.Bold
     )
 }
 
 @Composable
-fun MainTitle(title: String, modifier: Modifier = Modifier) {
+fun MainTitle(
+    title: String,
+    modifier: Modifier = Modifier,
+    maxLine: Int = 1,
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color = HamTheme.colors.textPrimary
+) {
     Title(
         title = title,
         modifier = modifier,
-        fontSize = 16.sp,
-        color = HamTheme.colors.textPrimary,
-        fontWeight = FontWeight.SemiBold
+        fontSize = H4,
+        color = color,
+        fontWeight = FontWeight.SemiBold,
+        maxLine = maxLine,
+        textAlign = textAlign
     )
 }
 
@@ -37,23 +45,67 @@ fun MainTitle(title: String, modifier: Modifier = Modifier) {
 fun MediumTitle(
     title: String,
     modifier: Modifier = Modifier,
-    color: Color = HamTheme.colors.textPrimary
+    color: Color = HamTheme.colors.textPrimary,
+    textAlign: TextAlign = TextAlign.Start
 ) {
     Title(
         title = title,
-        fontSize = 16.sp,
+        fontSize = H5,
         modifier = modifier,
-        color = color
+        color = color,
+        textAlign = textAlign
     )
 }
 
 @Composable
 fun TextContent(
-    title: String,
+    text: String,
     modifier: Modifier = Modifier,
-    color: Color = HamTheme.colors.textSecondary
+    color: Color = HamTheme.colors.textSecondary,
+    maxLines: Int = 99,
+    textAlign: TextAlign = TextAlign.Start,
+    canCopy: Boolean = false,
 ) {
-    Title(title = title, modifier = modifier, fontSize = 14.sp, color = color)
+    if (canCopy) {
+        SelectionContainer {
+            Title(
+                title = text,
+                modifier = modifier,
+                fontSize = H6,
+                color = color,
+                maxLine = maxLines,
+                textAlign = textAlign
+            )
+        }
+    } else {
+        Title(
+            title = text,
+            modifier = modifier,
+            fontSize = H6,
+            color = color,
+            maxLine = maxLines,
+            textAlign = textAlign
+        )
+    }
+
+}
+
+@Composable
+fun MiniTitle(
+    text: String,
+    modifier: Modifier = Modifier,
+    color: Color = HamTheme.colors.textSecondary,
+    maxLines: Int = 1,
+    textAlign: TextAlign = TextAlign.Start,
+) {
+    Title(
+        title = text,
+        modifier = modifier,
+        fontSize = H7,
+        color = color,
+        maxLine = maxLines,
+        textAlign = textAlign
+    )
 }
 
 @Composable
@@ -62,12 +114,17 @@ fun Title(
     modifier: Modifier = Modifier,
     fontSize: TextUnit,
     color: Color = HamTheme.colors.textSecondary,
-    fontWeight: FontWeight = FontWeight.Normal
+    fontWeight: FontWeight = FontWeight.Normal,
+    maxLine: Int = 1,
+    textAlign: TextAlign = TextAlign.Start
 ) {
     Text(
         text = title,
         modifier = modifier,
         fontSize = fontSize,
-        color = color
+        color = color,
+        maxLines = maxLine,
+        overflow = TextOverflow.Ellipsis,
+        textAlign = textAlign
     )
 }

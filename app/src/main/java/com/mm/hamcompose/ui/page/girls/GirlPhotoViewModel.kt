@@ -1,26 +1,24 @@
 package com.mm.hamcompose.ui.page.girls
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
-import androidx.paging.PagingData
 import com.blankj.utilcode.util.LogUtils
-import com.blankj.utilcode.util.StringUtils
-import com.mm.hamcompose.bean.Article
-import com.mm.hamcompose.bean.WelfareBean
-import com.mm.hamcompose.bean.WelfareData
-import com.mm.hamcompose.repository.HttpRepo
+import com.mm.hamcompose.data.bean.WelfareData
+import com.mm.hamcompose.data.http.HttpResult
+import com.mm.hamcompose.repository.HttpRepository
 import com.mm.hamcompose.ui.page.base.BaseViewModel
-import kotlinx.coroutines.flow.Flow
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
-class GirlPhotoViewModel @ViewModelInject constructor(
-    private var repo: HttpRepo
+@HiltViewModel
+class GirlPhotoViewModel @Inject constructor(
+    private var repo: HttpRepository
 ): BaseViewModel<WelfareData>() {
 
     var page = 1
     var hasNext = true
     //var pagingData = MutableLiveData<Flow<PagingData<WelfareData>>>()
-    val photos = MutableLiveData(mutableListOf<WelfareData>())
+    val photoData = MutableLiveData(mutableListOf<WelfareData>())
 
     override fun start() {
 //        if (pagingData.value==null) {
@@ -37,18 +35,25 @@ class GirlPhotoViewModel @ViewModelInject constructor(
 
     override fun loadContent() {
         async {
-            repo.getWelfareData(page)
-                .collectLatest {
-                    if (it.results!=null) {
-                        LogUtils.e("图片列表 ${it.results}")
-                        hasNext = hasNext(it.results!!)
-                        if (hasNext) {
-                            page+=1
+            repo.getWelfareData(page).collectLatest {
+                    when (it) {
+                        is HttpResult.Success -> {
+                            val photos = it.result.results
+                            if (photos!=null) {
+                                LogUtils.e("图片列表 $photos")
+                                hasNext = hasNext(photos)
+                                if (hasNext) {
+                                    page+=1
+                                }
+                                if (photoData.value!!.isEmpty()) {
+                                    photoData.value = photos as MutableList<WelfareData>
+                                } else {
+                                    photoData.value?.addAll(photos)
+                                }
+                            }
                         }
-                        if (photos.value!!.isEmpty()) {
-                            photos.value = it.results!! as MutableList<WelfareData>
-                        } else {
-                            photos.value?.addAll(it.results!!)
+                        is HttpResult.Error -> {
+                            
                         }
                     }
                 }

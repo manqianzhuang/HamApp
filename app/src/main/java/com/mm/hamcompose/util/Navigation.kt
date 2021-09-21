@@ -21,7 +21,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.toMutableStateList
-import com.mm.hamcompose.ui.Destination
 
 /**
  * A simple navigator which maintains a back stack.

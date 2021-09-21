@@ -12,12 +12,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import com.blankj.utilcode.util.LogUtils
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
-import com.mm.hamcompose.HamApp
 import com.mm.hamcompose.R
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target

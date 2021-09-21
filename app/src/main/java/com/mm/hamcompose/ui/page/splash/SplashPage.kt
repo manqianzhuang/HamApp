@@ -2,11 +2,7 @@ package com.mm.hamcompose.ui.page.splash
 
 import android.annotation.SuppressLint
 import android.os.CountDownTimer
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,28 +12,22 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.blankj.utilcode.util.LogUtils
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.mm.hamcompose.R
 import com.mm.hamcompose.theme.splashText
 import com.mm.hamcompose.theme.white1
-import com.mm.hamcompose.ui.widget.LargeTitle
 import com.mm.hamcompose.ui.widget.TextContent
-import kotlin.concurrent.timer
 import kotlin.random.Random
 
 @OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun SplashPage(
-    onNextPage: () -> Unit
-) {
+fun SplashPage(onNextPage: () -> Unit) {
 
     val imageRes = listOf(
         R.mipmap.splash_image01,
@@ -50,14 +40,9 @@ fun SplashPage(
     val bgImage = imageRes[Random.nextInt(imageRes.size)]
     var interval by remember { mutableStateOf(5) }
     val timer = SplashTimer(
-        onTickMillis = {
-            if (interval >= 0) {
-                interval -= 1
-            }
-        },
-        onFinished = {
-            onNextPage()
-        }).start()
+        onTickMillis = { if (interval >= 0) { interval -= 1 } },
+        onFinished = { onNextPage() }
+    ).start()
 
     ConstraintLayout(
         modifier = Modifier
@@ -90,7 +75,7 @@ fun SplashPage(
             })
 
         TextContent(
-            title = "Version: 1.0.0",
+            text = "Version: 1.0.0",
             color = white1,
             modifier = Modifier
                 .padding(bottom = 80.dp)
@@ -102,7 +87,7 @@ fun SplashPage(
         )
 
         Text(
-            text = "Play",
+            text = "Wan",
             fontSize = 36.sp,
             color = white1,
             modifier = Modifier
@@ -137,7 +122,7 @@ class SplashTimer(
     val onFinished: () -> Unit
 ) : CountDownTimer(5000, 1000) {
     override fun onTick(millisUntilFinished: Long) {
-        LogUtils.e("onTick = $millisUntilFinished")
+        LogUtils.i("onTick = $millisUntilFinished")
         onTickMillis()
     }
 
@@ -158,7 +143,7 @@ fun SplashIntervalText(title: String, modifier: Modifier, doClick: () -> Unit) {
             }
     ) {
         TextContent(
-            title = if (title == "-1") "进入" else "${title}s",
+            text = if (title == "-1") "进入" else "${title}s",
             color = white1,
             modifier = Modifier.align(Alignment.Center)
         )

@@ -5,23 +5,27 @@ plugins {
     id "kotlin-kapt"
     id "dagger.hilt.android.plugin"
     id "kotlin-parcelize"
+    id "androidx.navigation.safeargs.kotlin"
 }
 
 android {
-    compileSdk = 30
-    buildToolsVersion = "30.0.3"
+    compileSdk = androidCompileSdk
+    buildToolsVersion = androidBuildToolsVersion
 
     defaultConfig {
         applicationId = "com.mm.hamcompose"
-        minSdk = 21
-        targetSdk = 30
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = project.minSdkVersion
+        targetSdk = project.targetSdkVersion
+        versionCode = project.currentVersionCode
+        versionName = project.currentVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        multiDexEnabled true
+
     }
 
     buildTypes {
@@ -52,19 +56,18 @@ android {
 
 dependencies {
 
-    implementation "androidx.core:core-ktx:1.6.0-alpha01"
-    implementation "androidx.appcompat:appcompat:1.2.0"
-    implementation "com.google.android.material:material:1.3.0"
-    implementation "androidx.activity:activity-compose:1.3.0-alpha06"
+    implementation "androidx.core:core-ktx:$coreKtxVersion"
+    implementation "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.activity:activity-compose:$activityComposeVersion"
 
-//    def accompanistVersion = "0.7.2-SNAPSHOT"
-    def accompanistVersion = "0.8.1"
+    /** accompanist辅助插件 */
     implementation "com.google.accompanist:accompanist-insets:$accompanistVersion"
-    implementation "com.google.accompanist:accompanist-coil:$accompanistVersion"
+    implementation "com.google.accompanist:accompanist-coil:0.12.0"
     //系统ui控制器
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
     //glide
-    implementation "com.google.accompanist:accompanist-glide:$accompanistVersion"
+    implementation "com.google.accompanist:accompanist-glide:0.12.0"
     //viewPager
     implementation "com.google.accompanist:accompanist-pager:$accompanistVersion"
     implementation "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"
@@ -72,8 +75,9 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanistVersion"
     //流式布局
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanistVersion"
+
     //约束布局
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha05"
+    implementation "androidx.constraintlayout:constraintlayout-compose:$constraintComposeVersion"
 
     //compose插件
     implementation "androidx.compose.ui:ui:$composeVersion"
@@ -85,63 +89,60 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$composeVersion"
 
     //lifecycle插件
-    def lifecycleVersion = "2.3.0"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha04"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$viewModelComposeVersion"
     //协程
-    def coroutineVersion = "1.4.3"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion"
-    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$coroutineAdapterVersion"
 
-    // Dagger2
-//    def dagger2Version = "2.33"
-//    implementation "com.google.dagger:dagger:$dagger2Version"
-//    kapt "com.google.dagger:dagger-compiler:$dagger2Version"
-//    implementation "com.google.dagger:dagger-android:$dagger2Version"
-//    implementation "com.google.dagger:dagger-android-support:$dagger2Version"
-//    kapt "com.google.dagger:dagger-android-processor:$dagger2Version"
+    //hilt inject framework
+    implementation "com.google.dagger:hilt-android:$hiltVersion"
+    kapt "com.google.dagger:hilt-compiler:$hiltVersion"
+    androidTestImplementation  "com.google.dagger:hilt-android-testing:$hiltVersion"
+    kaptAndroidTest "com.google.dagger:hilt-compiler:$hiltVersion"
+    testImplementation "com.google.dagger:hilt-android-testing:$hiltVersion"
+    kaptTest "com.google.dagger:hilt-compiler:$hiltVersion"
+    implementation "androidx.hilt:hilt-navigation-compose:$hiltComposeVersion"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltComposeVersion"
+    kapt "androidx.hilt:hilt-compiler:$hiltCompilerVersion"
 
-    //hilt
-    implementation "com.google.dagger:hilt-android:2.28-alpha"
-    kapt "com.google.dagger:hilt-android-compiler:2.28-alpha"
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02"
-    kapt "androidx.hilt:hilt-compiler:1.0.0-alpha02"
-
-    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
-    implementation "com.squareup.retrofit2:retrofit:2.9.0"
-    implementation "com.google.code.gson:gson:2.8.6"
+    //http request
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
 
     //util
-    implementation "com.blankj:utilcode:1.23.7"
+    implementation "com.blankj:utilcode:$blankjToolVersion"
 
-    testImplementation "junit:junit:4.13.2"
-    androidTestImplementation "androidx.test.ext:junit:1.1.2"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.3.0"
+    //测试
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$extJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
 
     //glide
-    def glideVersion = "4.12.0"
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
     //picasso
-    def picassoVersion = "2.71828"
     implementation "com.squareup.picasso:picasso:$picassoVersion"
 
-    //分页库
-    def pagingVersion = "3.0.0-beta02"
-    // For Kotlin use paging-runtime-ktx
+    //paging分页库
     implementation "androidx.paging:paging-runtime:$pagingVersion"
-    // alternatively - without Android dependencies for testing
-    // For Kotlin use paging-common-ktx
     testImplementation "androidx.paging:paging-common:$pagingVersion"
-    // Jetpack Compose Integration
-    implementation "androidx.paging:paging-compose:1.0.0-alpha08"
-
-    def roomVersion = "2.3.0"
+    implementation "androidx.paging:paging-compose:$pagingComposeVersion"
+    //room数据库
     implementation "androidx.room:room-runtime:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-paging:$roomPagingVersion"
+
+    implementation "androidx.navigation:navigation-compose:$navigationComposeVersion"
+
+    //数据保存，用于cookie持久化
+    implementation "androidx.datastore:datastore-preferences:$datastoreVersion"
+    implementation "androidx.datastore:datastore-core:$datastoreVersion"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.5.21"
 
 }

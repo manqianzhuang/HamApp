@@ -3,6 +3,7 @@ package com.mm.hamcompose
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import com.mm.hamcompose.data.store.DataStoreUtils
 import dagger.hilt.android.HiltAndroidApp
 
 /**
@@ -23,9 +24,6 @@ class HamApp: Application() {
     override fun onCreate() {
         super.onCreate()
         CONTEXT = this
-    }
-
-    override fun onTerminate() {
-        super.onTerminate()
+        DataStoreUtils.init(this)
     }
 }

@@ -1,8 +1,6 @@
 package com.mm.hamcompose.theme
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.colorspace.ColorSpaces
-import androidx.compose.ui.res.colorResource
 import com.mm.hamcompose.HamApp
 import com.mm.hamcompose.R
 
@@ -62,5 +60,5 @@ val red7 = Color(0xFFDC514E)
 val red8 = Color(0xFFCBC7BF)
 val yellow1 = Color(0xFFF6CA23)
 val blue = Color(0xFF0000FF)
-val info = Color(0xFF305A85)
+val info = Color(0xFF018786)
 val warn = Color(0xFFD87831)

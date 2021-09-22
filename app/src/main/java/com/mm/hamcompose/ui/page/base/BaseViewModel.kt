@@ -12,7 +12,11 @@ abstract class BaseViewModel<T> : ViewModel() {
 
     var currentListIndex = mutableStateOf(0)
 
+    var loading = mutableStateOf(false)
+
     private var _isInited = mutableStateOf(false)
+
+    var message = mutableStateOf("")
 
     private val isInited: Boolean
         get() = _isInited.value
@@ -47,7 +51,13 @@ abstract class BaseViewModel<T> : ViewModel() {
         println("## save position = $index ##")
     }
 
-    open fun stopLoading() { }
+    fun stopLoading() {
+        loading.value = false
+    }
+
+    fun startLoading() {
+        loading.value = true
+    }
 
     open fun loadContent() { }
 

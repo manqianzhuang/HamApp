@@ -34,12 +34,13 @@ fun ShareArticlePage(
 
 
     if (errorMsg.isNotEmpty()) {
-        popSnack(
-            rememberCoroutineScope(),
-            scaffoldState,
-            if (errorMsg == "分享成功") SNACK_SUCCESS else snackLabel,
-            errorMsg
-        ) { errorMsg = "" }
+        popupSnackBar(
+            scope = rememberCoroutineScope(),
+            scaffoldState = scaffoldState,
+            label = if (errorMsg == "分享成功") SNACK_SUCCESS else snackLabel,
+            message = errorMsg
+        )
+        errorMsg = ""
     }
 
     Column {

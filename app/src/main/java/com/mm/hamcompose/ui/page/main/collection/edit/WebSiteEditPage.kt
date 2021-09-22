@@ -54,7 +54,8 @@ fun WebSiteEditPage(
     }
 
     if (errorMessage.isNotEmpty()) {
-        popSnack(coroutineState, scaffoldState, snackLabel, errorMessage) { errorMessage = "" }
+        popupSnackBar(coroutineState, scaffoldState, snackLabel, errorMessage)
+        errorMessage = ""
     }
 
     Column(

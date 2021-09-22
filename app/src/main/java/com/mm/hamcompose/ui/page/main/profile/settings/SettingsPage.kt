@@ -60,7 +60,8 @@ fun SettingsPage(
     }
 
     if (tipsMessage.isNotEmpty()) {
-        popSnack(coroutineScope, scaffoldState, SNACK_INFO, tipsMessage) { tipsMessage = "" }
+        popupSnackBar(coroutineScope, scaffoldState, SNACK_INFO, tipsMessage)
+        tipsMessage = ""
     }
 
     Column(Modifier.fillMaxSize()) {
@@ -144,10 +145,9 @@ fun SettingsPage(
             onConfirmClick = {
                 coroutineScope.launch {
                     val cacheResult = withContext(Dispatchers.IO) {
-                        val isDeleted = CacheDataManager.clearAllCache(context)
+                        CacheDataManager.clearAllCache(context)
                         val size = CacheDataManager.getTotalCacheSize(context)
-                        val deleteResult = if (isDeleted) "缓存已清理" else "缓存清理失败"
-                        arrayOf(deleteResult, size)
+                        arrayOf("缓存已清理", size)
                     }
                     withContext(Dispatchers.Main) {
                         isClearCache = false

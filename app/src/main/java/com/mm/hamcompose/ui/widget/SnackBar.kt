@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-const val SNACK_INFO = " "
-const val SNACK_WARN = "WARN"
-const val SNACK_ERROR = "ERR"
+const val SNACK_INFO = ""
+const val SNACK_WARN = " "
+const val SNACK_ERROR = "  "
 const val SNACK_SUCCESS = "OK"
 
 @Composable
@@ -25,26 +25,21 @@ fun HamSnackBar(data: SnackbarData) {
             SNACK_SUCCESS -> HamTheme.colors.success
             else -> HamTheme.colors.themeUi
         },
+        actionColor = HamTheme.colors.textPrimary,
         contentColor = HamTheme.colors.textPrimary,
     )
 }
 
-fun popSnack(
+fun popupSnackBar(
     scope: CoroutineScope,
     scaffoldState: ScaffoldState,
     label: String,
     message: String,
-    onPopDelayCallback: ()-> Unit
+    onDismissCallback: () -> Unit = {}
 ) {
     scope.launch {
-        scaffoldState
-            .snackbarHostState
-            .showSnackbar(
-                actionLabel = label,
-                message = message
-            )
-        delay(10)
-        onPopDelayCallback.invoke()
+        scaffoldState.snackbarHostState.showSnackbar(actionLabel = label, message = message)
+        onDismissCallback.invoke()
     }
 
 }

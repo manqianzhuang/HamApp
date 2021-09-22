@@ -4,11 +4,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.blankj.utilcode.util.LogUtils
 import com.mm.hamcompose.data.bean.Article
 import com.mm.hamcompose.data.db.history.HistoryDatabase
 import com.mm.hamcompose.repository.HttpRepository
 import com.mm.hamcompose.repository.PagingArticle
-import com.mm.hamcompose.ui.page.base.CollectViewModel
+import com.mm.hamcompose.ui.page.base.BaseCollectViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -16,7 +17,7 @@ import javax.inject.Inject
 class SquareViewModel @Inject constructor(
     private var repo: HttpRepository,
     private val db: HistoryDatabase,
-): CollectViewModel<Article>(repo) {
+): BaseCollectViewModel<Article>(repo) {
 
     var pagingData = MutableLiveData<PagingArticle?>(null)
     var isRefreshing = mutableStateOf(false)
@@ -39,6 +40,11 @@ class SquareViewModel @Inject constructor(
 
     fun saveDataToHistory(article: Article) {
         cacheHistory(db, article)
+    }
+
+    override fun onCleared() {
+        LogUtils.e("SquareViewModel ===> ViewModel执行onCleared()")
+        super.onCleared()
     }
 
 

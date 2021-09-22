@@ -12,7 +12,7 @@ import com.mm.hamcompose.data.db.hotkey.HotkeyDatabase
 import com.mm.hamcompose.data.http.HttpResult
 import com.mm.hamcompose.repository.HttpRepository
 import com.mm.hamcompose.repository.PagingArticle
-import com.mm.hamcompose.ui.page.base.CollectViewModel
+import com.mm.hamcompose.ui.page.base.BaseCollectViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -24,7 +24,7 @@ class SearchViewModel @Inject constructor(
     private val repo: HttpRepository,
     private val hotkeyDatabase: HotkeyDatabase,
     private val historyDatabase: HistoryDatabase,
-): CollectViewModel<Article>(repo) {
+): BaseCollectViewModel<Article>(repo) {
 
     //搜索列表
     val searches = MutableLiveData<PagingArticle?>(null)

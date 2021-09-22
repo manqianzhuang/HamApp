@@ -4,7 +4,7 @@ import com.mm.hamcompose.data.http.HttpResult
 import com.mm.hamcompose.repository.HttpRepository
 import kotlinx.coroutines.flow.collectLatest
 
-abstract class CollectViewModel<T> constructor(
+abstract class BaseCollectViewModel<T> constructor(
     private val httpRepo: HttpRepository
 ) : CacheHistoryViewModel<T>() {
 
@@ -18,7 +18,7 @@ abstract class CollectViewModel<T> constructor(
                         val nullNotice = "the result of remote's request is null"
                         if (response.exception.message==nullNotice) {
                             println("收藏成功(id=$id)")
-                            //resetInitState()
+                            message.value = "收藏成功"
                         }
                     }
                 }
@@ -36,9 +36,8 @@ abstract class CollectViewModel<T> constructor(
                         val nullNotice = "the result of remote's request is null"
                         if (response.exception.message==nullNotice) {
                             println("取消收藏(id=$id)")
-                            //resetInitState()
+                            message.value = "取消收藏"
                         }
-
                     }
                 }
             }

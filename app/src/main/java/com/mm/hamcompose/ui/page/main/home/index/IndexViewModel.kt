@@ -1,5 +1,6 @@
 package com.mm.hamcompose.ui.page.main.home.index
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -11,7 +12,7 @@ import com.mm.hamcompose.data.db.history.HistoryDatabase
 import com.mm.hamcompose.data.http.HttpResult
 import com.mm.hamcompose.repository.HttpRepository
 import com.mm.hamcompose.repository.PagingArticle
-import com.mm.hamcompose.ui.page.base.CollectViewModel
+import com.mm.hamcompose.ui.page.base.BaseCollectViewModel
 import com.mm.hamcompose.ui.widget.BannerData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -22,12 +23,12 @@ import javax.inject.Inject
 class IndexViewModel @Inject constructor(
     private var repo: HttpRepository,
     private val historyDb: HistoryDatabase
-) : CollectViewModel<BannerBean>(repo) {
+) : BaseCollectViewModel<BannerBean>(repo) {
 
     var pagingData = MutableLiveData<PagingArticle>(null)
     val imageList = mutableStateOf(mutableListOf<BannerData>())
-    var isRefreshing = mutableStateOf(true)
-    val topArticles = mutableStateOf(mutableListOf<Article>())
+    var isRefreshing = mutableStateOf(false)
+    var topArticles = mutableStateListOf<Article>()
 
     //列表：使用paging3分页加载框架
     private fun homeData() = repo.getIndexData().cachedIn(viewModelScope)
@@ -58,10 +59,11 @@ class IndexViewModel @Inject constructor(
             repo.getTopArticles().collectLatest { response ->
                 when (response) {
                     is HttpResult.Success -> {
-                        topArticles.value = response.result
+                        topArticles.clear()
+                        topArticles.addAll(response.result)
                     }
                     is HttpResult.Error -> {
-                        topArticles.value.clear()
+                        topArticles.clear()
                     }
                 }
             }
@@ -74,11 +76,11 @@ class IndexViewModel @Inject constructor(
     }
 
     private fun refreshHots() {
-        topArticles.value.clear()
+        topArticles.clear()
         loadTopArticles()
     }
 
-    private fun refreshPagingData() {
+    private fun getHomesList() {
         pagingData.value = null
         pagingData.value = homeData()
         isRefreshing.value = pagingData.value == null
@@ -89,20 +91,19 @@ class IndexViewModel @Inject constructor(
         isRefreshing.value = true
         refreshBanner()
         refreshHots()
-        refreshPagingData()
+        getHomesList()
     }
 
     override fun start() {
         initThat {
             loadBanners()
             loadTopArticles()
-            pagingData.value = homeData()
-            isRefreshing.value = pagingData.value == null
+            getHomesList()
         }
     }
 
     override fun onCleared() {
-        LogUtils.e("ViewModel执行onCleared()")
+        LogUtils.e("IndexViewModel ===> ViewModel执行onCleared()")
         super.onCleared()
     }
 

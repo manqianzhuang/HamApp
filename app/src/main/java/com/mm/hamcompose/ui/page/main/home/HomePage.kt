@@ -1,6 +1,7 @@
 package com.mm.hamcompose.ui.page.main.home
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomePage(
     navCtrl: NavHostController,
+    scaffoldState: ScaffoldState,
     homeIndex: Int = 0,
     viewModel: HomeViewModel = hiltViewModel(),
     onPageSelected: (position: Int) -> Unit,
@@ -64,10 +66,10 @@ fun HomePage(
         HorizontalPager(state = pagerState, dragEnabled = false) { page ->
             onPageSelected(pagerState.currentPage)
             when (page) {
-                0 -> IndexPage(navCtrl) { position -> viewModel.setCachePosition(0, position) }
-                1 -> SquarePage(navCtrl) { position -> viewModel.setCachePosition(0, position) }
-                2 -> ProjectPage(navCtrl) { position -> viewModel.setCachePosition(0, position) }
-                3 -> WenDaPage(navCtrl) { position -> viewModel.setCachePosition(0, position) }
+                0 -> IndexPage(navCtrl, scaffoldState) { viewModel.setCachePosition(0, it) }
+                1 -> SquarePage(navCtrl) { viewModel.setCachePosition(1, it) }
+                2 -> ProjectPage(navCtrl) { viewModel.setCachePosition(2, it) }
+                3 -> WenDaPage(navCtrl) {  viewModel.setCachePosition(3, it) }
             }
         }
     }

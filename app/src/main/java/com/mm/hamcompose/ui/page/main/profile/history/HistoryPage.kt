@@ -39,9 +39,8 @@ fun HistoryPage(
     val asyncScope = rememberCoroutineScope()
 
     if (isClear) {
-        popSnack(asyncScope, scaffoldState, SNACK_INFO, "历史记录已清空") {
-            viewModel.isClear.value = false
-        }
+        popupSnackBar(asyncScope, scaffoldState, SNACK_INFO, "历史记录已清空")
+        viewModel.isClear.value = false
     }
 
     Column(

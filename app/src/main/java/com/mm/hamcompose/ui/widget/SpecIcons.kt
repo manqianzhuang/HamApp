@@ -108,12 +108,13 @@ fun UserIcon(
 
 @Composable
 fun AddIcon(
-    modifier: Modifier
+    modifier: Modifier,
+    color: Color = HamTheme.colors.textPrimary
 ) {
     Icon(
         imageVector = Icons.Default.Add,
         contentDescription = null,
-        tint = HamTheme.colors.textPrimary,
+        tint = color,
         modifier = modifier
     )
 }

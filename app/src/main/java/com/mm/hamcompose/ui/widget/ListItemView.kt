@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.google.accompanist.placeholder.material.placeholder
 import com.mm.hamcompose.R
 import com.mm.hamcompose.data.bean.Article
 import com.mm.hamcompose.data.bean.CollectBean
@@ -33,9 +34,15 @@ import com.mm.hamcompose.theme.*
 import com.mm.hamcompose.util.RegexUtils
 
 @Composable
-fun ListTitle(title: String, modifier: Modifier = Modifier) {
+fun ListTitle(
+    modifier: Modifier = Modifier,
+    title: String,
+    subTitle: String = "",
+    onSubtitleClick: () -> Unit = {}
+) {
     Row(
         modifier = modifier
+            .placeholder(false)
             .fillMaxWidth()
             .height(ListTitleHeight)
             .background(color = HamTheme.colors.background)
@@ -52,6 +59,14 @@ fun ListTitle(title: String, modifier: Modifier = Modifier) {
             title = title,
             modifier = Modifier.align(Alignment.CenterVertically)
         )
+        Spacer(modifier = Modifier.weight(1f))
+        TextContent(
+            text = subTitle,
+            modifier = Modifier
+                .padding(end = 10.dp)
+                .clickable {
+                    onSubtitleClick.invoke()
+                })
     }
 
 }
@@ -68,7 +83,8 @@ fun CollectListItemView(
             .padding(horizontal = 10.dp, vertical = 5.dp)
             .fillMaxWidth()
             .wrapContentWidth()
-            .clickable { onClick.invoke() },
+            .clickable { onClick.invoke() }
+            .placeholder(false),
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -142,7 +158,11 @@ fun CollectListItemView(
 }
 
 @Composable
-fun SimpleListItemView(data: Article, onClick: () -> Unit, onCollectClick: (articleId: Int) -> Unit) {
+fun SimpleListItemView(
+    data: Article,
+    onClick: () -> Unit,
+    onCollectClick: (articleId: Int) -> Unit
+) {
     Card(
         modifier = Modifier
             .padding(horizontal = 10.dp, vertical = 5.dp)
@@ -150,7 +170,8 @@ fun SimpleListItemView(data: Article, onClick: () -> Unit, onCollectClick: (arti
             .wrapContentWidth()
             .clickable {
                 onClick.invoke()
-            },
+            }
+            .placeholder(false)
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -214,7 +235,8 @@ fun SimpleListItemView(data: Article, onClick: () -> Unit, onCollectClick: (arti
                 onClick = {
                     onCollectClick.invoke(data.id)
                 }
-            ) }
+            )
+        }
     }
 }
 
@@ -228,6 +250,7 @@ fun MultiStateItemView(
     onSelected: (data: WebData) -> Unit,
     onCollectClick: (articleId: Int) -> Unit,
     onUserClick: (userId: Int) -> Unit,
+    isLoading: Boolean = false,
 ) {
     Card(
         modifier = modifier
@@ -236,7 +259,8 @@ fun MultiStateItemView(
             .clickable {
                 val webData = WebData(data.title!!, data.link!!)
                 onSelected(webData)
-            },
+            }
+            .placeholder(isLoading),
         shape = HamShapes.medium,
         backgroundColor = HamTheme.colors.listItem,
     ) {
@@ -412,7 +436,7 @@ fun ArrowRightListItem(
                 .weight(1f)
         ) {
             TextContent(text = title, modifier = Modifier.align(Alignment.CenterVertically))
-            if (msgCount != null ) {
+            if (msgCount != null) {
                 Text(
                     text = "（$msgCount）",
                     fontSize = H7,
@@ -426,7 +450,8 @@ fun ArrowRightListItem(
                 text = valueText,
                 modifier = Modifier
                     .padding(end = 5.dp)
-                    .align(Alignment.CenterVertically))
+                    .align(Alignment.CenterVertically)
+            )
         }
         Icon(
             Icons.Default.KeyboardArrowRight,

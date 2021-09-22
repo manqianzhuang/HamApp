@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import androidx.paging.compose.itemsIndexed
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mm.hamcompose.data.bean.ParentBean
@@ -80,7 +81,7 @@ fun PublicAccountSearch(
             ) {
                 if (searchResult != null) {
                     LazyColumn(state = listState) {
-                        items(searchResult) { item ->
+                        itemsIndexed(searchResult) { index, item ->
                             SimpleListItemView(
                                 data = item!!,
                                 onClick = {
@@ -92,10 +93,10 @@ fun PublicAccountSearch(
                                 onCollectClick = {
                                     if (item.collect) {
                                         viewModel.uncollectArticleById(it)
-                                        item.collect = false
+                                        searchResult.peek(index)?.collect = false
                                     } else {
                                         viewModel.collectArticleById(it)
-                                        item.collect = true
+                                        searchResult.peek(index)?.collect = true
                                     }
 
                                 })

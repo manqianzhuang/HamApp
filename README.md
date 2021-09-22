@@ -30,10 +30,9 @@ Mvvm, Android Studio ArcticFox
 3.  欢迎各位提PR，我会抽时间不断优化代码和修复bug。如有请教，请邮件联系
 
 #### TODO
-1. 添加动画 
-2. 优化键盘的触发 = DONE
-3. 收藏时更新Item状态 
-4. 添加更换主题色  = DONE
-5. 添加Loading
-6. 完成我的消息开发
+1. 添加动画 = SUSPEND
+2. 多标题类型的列表下，initialFirstVisibleItemIndex SUSPEND
+3. 收藏时更新状态 100%
+5. 添加Loading = WAIT
+6. 我的消息开发 = WAIT
 

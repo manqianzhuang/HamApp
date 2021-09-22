@@ -9,9 +9,7 @@ import com.mm.hamcompose.data.bean.Article
 import com.mm.hamcompose.data.db.history.HistoryDatabase
 import com.mm.hamcompose.repository.HttpRepository
 import com.mm.hamcompose.repository.PagingArticle
-import com.mm.hamcompose.ui.page.base.BaseViewModel
-import com.mm.hamcompose.ui.page.base.CacheHistoryViewModel
-import com.mm.hamcompose.ui.page.base.CollectViewModel
+import com.mm.hamcompose.ui.page.base.BaseCollectViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -19,7 +17,7 @@ import javax.inject.Inject
 class PublicAccountAuthorViewModel @Inject constructor(
     private var repo: HttpRepository,
     private val db: HistoryDatabase,
-): CollectViewModel<Article>(repo) {
+): BaseCollectViewModel<Article>(repo) {
 
     /**
      * 某个技术公众号的列表

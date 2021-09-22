@@ -34,12 +34,9 @@ import com.mm.hamcompose.theme.HamTheme
 import com.mm.hamcompose.theme.ToolBarHeight
 import com.mm.hamcompose.ui.route.RouteUtils
 import com.mm.hamcompose.ui.route.RouteName
-import com.mm.hamcompose.ui.widget.LabelTextButton
-import com.mm.hamcompose.ui.widget.MediumTitle
-import com.mm.hamcompose.ui.widget.MultiStateItemView
-import com.mm.hamcompose.ui.widget.TextContent
+import com.mm.hamcompose.ui.widget.*
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchPage(
     navCtrl: NavHostController,
@@ -75,13 +72,12 @@ fun SearchPage(
         )
 
         LazyColumn(state = listState) {
+            // part1. 搜索热词
+            stickyHeader {
+                ListTitle(title = "搜索热词")
+            }
             item {
-                // part1. 搜索热词
                 if (hotkeys.isNotEmpty()) {
-                    MediumTitle(
-                        title = "搜索热词",
-                        modifier = Modifier.padding(top = 10.dp, start = 10.dp)
-                    )
                     Box {
                         HotkeyItem(
                             hotkeys = hotkeys,
@@ -91,38 +87,35 @@ fun SearchPage(
                             })
                     }
                 }
-                //part2. 历史记录
-                if (history.isNotEmpty()) {
-                    Row(Modifier.padding(10.dp)) {
-                        MediumTitle(title = "搜索历史")
-                        Box(modifier = Modifier.weight(1f))
-                        TextContent(
-                            text = "清空",
-                            modifier = Modifier.clickable {
-                                viewModel.deleteAll()
+            }
+            //part2. 历史记录
+            if (history.isNotEmpty()) {
+                stickyHeader {
+                    ListTitle(
+                        title = "搜索历史",
+                        subTitle = "清空",
+                        onSubtitleClick = {
+                            viewModel.deleteAll()
+                        })
+                }
+                history.forEach { item ->
+                    item {
+                        HistoryItem(
+                            data = item,
+                            viewModel = viewModel,
+                            onSelected = {
+                                viewModel.searchContent.value = it
                             }
                         )
                     }
-                    Column {
-                        history.forEach { item ->
-                            HistoryItem(
-                                data = item,
-                                viewModel = viewModel,
-                                onSelected = {
-                                    viewModel.searchContent.value = it
-                                }
-                            )
-                        }
-                    }
                 }
             }
-
             // part3. 搜索列表
+            stickyHeader {
+                ListTitle(title = "搜索结果")
+            }
             if (queries != null) {
-                item {
-                    MediumTitle(title = "搜索内容", modifier = Modifier.padding(10.dp))
-                }
-                itemsIndexed(queries) { position, item ->
+                itemsIndexed(queries) { index, item ->
                     MultiStateItemView(
                         data = item!!,
                         onSelected = { data ->
@@ -133,10 +126,10 @@ fun SearchPage(
                         onCollectClick = {
                             if (item.collect) {
                                 viewModel.uncollectArticleById(it)
-                                item.collect = false
+                                queries.peek(index)?.collect = false
                             } else {
                                 viewModel.collectArticleById(it)
-                                item.collect = true
+                                queries.peek(index)?.collect = true
                             }
                         },
                         onUserClick = { userId ->

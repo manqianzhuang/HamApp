@@ -37,12 +37,12 @@ fun SquarePage(
         state = swipeRefreshState,
         onRefresh = { viewModel.refresh() }
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            state = listState,
-            contentPadding = PaddingValues(top = 10.dp)
-        ) {
-            if (homeData != null) {
+        if (homeData != null) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                state = listState,
+                contentPadding = PaddingValues(top = 10.dp)
+            ) {
                 itemsIndexed(homeData) { index, item ->
                     MultiStateItemView(
                         data = item!!,
@@ -54,10 +54,10 @@ fun SquarePage(
                         onCollectClick = {
                             if (item.collect) {
                                 viewModel.uncollectArticleById(it)
-                                item.collect = false
+                                homeData.peek(index)?.collect = false
                             } else {
                                 viewModel.collectArticleById(it)
-                                item.collect = true
+                                homeData.peek(index)?.collect = true
                             }
 
                         },

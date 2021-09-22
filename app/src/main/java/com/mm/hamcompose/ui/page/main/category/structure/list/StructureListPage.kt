@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -16,8 +17,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -38,13 +43,16 @@ import com.mm.hamcompose.ui.route.RouteUtils.back
 import com.mm.hamcompose.ui.widget.MediumTitle
 import com.mm.hamcompose.ui.widget.MultiStateItemView
 
+internal const val TIPS_TEXT = "输入作者名称"
+
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun StructureListPage(
     parent: ParentBean?,
     navCtrl: NavHostController,
     viewModel: StructureListViewModel = hiltViewModel()
 ) {
-    parent?: return
+    parent ?: return
     viewModel.setId(parent.id)
     viewModel.start()
 
@@ -55,57 +63,65 @@ fun StructureListPage(
     val swipeRefreshState = rememberSwipeRefreshState(refreshing)
     val currentPosition by remember { viewModel.currentListIndex }
     val listState = rememberLazyListState(currentPosition)
+    val keyboard = LocalSoftwareKeyboardController.current
 
-    Box {
+    Column {
+        if (isShowInput) {
+            InputSearchBar(
+                keyWord = authorName,
+                onTextChange = {
+                    viewModel.authorName.value = it
+                    if (it.isEmpty()) {
+                        viewModel.refresh("")
+                    }
+                },
+                onSearchClick = {
+                    viewModel.searchByAuthor(it)
+                },
+                navCtrl = navCtrl
+            )
+        }
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = { viewModel.refresh(authorName) },
-            modifier = Modifier.align(Alignment.TopCenter)
-        ) {
-            Column {
-                if (isShowInput) {
-                    InputSearchBar(
-                        keyWord = authorName,
-                        onTextChange = {
-                            viewModel.authorName.value = it
-                            if (it.isEmpty()) {
-                                viewModel.refresh("")
-                            }
-                        },
-                        onSearchClick = {
-                            viewModel.searchByAuthor(it)
-                        },
-                        navCtrl = navCtrl
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = {
+                            keyboard?.hide()
+                        }
                     )
                 }
+        ) {
+            if (articles != null) {
+                LazyColumn(
+                    state = listState,
+                ) {
+                    itemsIndexed(articles) { index, item ->
+                        MultiStateItemView(
+                            data = item!!,
+                            onSelected = { data ->
+                                viewModel.saveDataToHistory(item)
+                                viewModel.savePosition(listState.firstVisibleItemIndex)
+                                RouteUtils.navTo(navCtrl, RouteName.WEB_VIEW, data)
+                            },
+                            onCollectClick = {
+                                if (item.collect) {
+                                    viewModel.uncollectArticleById(it)
+                                    articles.peek(index)?.collect = false
+                                } else {
+                                    viewModel.collectArticleById(it)
+                                    articles.peek(index)?.collect = true
+                                }
 
-                if (articles != null) {
-                    LazyColumn(state = listState) {
-                        itemsIndexed(articles) { position, item ->
-                            MultiStateItemView (
-                                data = item!!,
-                                onSelected = { data ->
-                                    viewModel.saveDataToHistory(item)
-                                    viewModel.savePosition(listState.firstVisibleItemIndex)
-                                    RouteUtils.navTo(navCtrl, RouteName.WEB_VIEW, data)
-                                },
-                                onCollectClick = {
-                                    if (item.collect) {
-                                        viewModel.uncollectArticleById(it)
-                                        item.collect = false
-                                    } else {
-                                        viewModel.collectArticleById(it)
-                                        item.collect = true
-                                    }
-
-                                },
-                                onUserClick = { userId ->
-                                    RouteUtils.navTo(navCtrl, RouteName.SHARER, userId)
-                                })
-                        }
+                            },
+                            onUserClick = { userId ->
+                                RouteUtils.navTo(navCtrl, RouteName.SHARER, userId)
+                            })
                     }
-                    isShowInput = listState.firstVisibleItemIndex <= 0
                 }
+                isShowInput = listState.firstVisibleItemIndex <= 0
             }
         }
     }
@@ -122,14 +138,15 @@ fun InputSearchBar(
     onSearchClick: (key: String) -> Unit,
     navCtrl: NavHostController
 ) {
+    val inputService = LocalTextInputService.current
     Box(
-        Modifier
+        modifier = Modifier
             .fillMaxWidth()
             .height(ToolBarHeight)
             .background(HamTheme.colors.themeUi)
     ) {
         Row(
-            Modifier
+            modifier = Modifier
                 .align(Alignment.Center)
                 .padding(10.dp)
         ) {
@@ -146,7 +163,7 @@ fun InputSearchBar(
             BasicTextField(
                 value = keyWord,
                 onValueChange = {
-                    onTextChange(it)
+                    onTextChange.invoke(it)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -165,10 +182,11 @@ fun InputSearchBar(
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp
                 ),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = { onSearchClick(keyWord) }),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions { inputService?.hideSoftwareKeyboard() },
                 cursorBrush = SolidColor(HamTheme.colors.textSecondary)
             )
+
             if (keyWord.trim().isNotEmpty()) {
                 MediumTitle(
                     title = "搜索",

@@ -24,17 +24,21 @@ class PointsRankingViewModel @Inject constructor(
     val personalPoints = mutableStateOf<PointsBean?>(null)
     var tabIndex = mutableStateOf(0)
     var errorMessage = mutableStateOf<String?>(null)
-    val titles = mutableStateOf(mutableListOf(
-        TabTitle(501, "排行榜"),
-        TabTitle(502, "我的积分"),
-    ))
+    val titles = mutableStateOf(
+        mutableListOf(
+            TabTitle(501, "排行榜"),
+            TabTitle(502, "我的积分"),
+        )
+    )
 
     override fun start() {
-        initThat { fetchData() }
+        initThat {
+            fetchData()
+        }
     }
 
     private fun fetchData() {
-        if (personalPoints.value==null) {
+        if (personalPoints.value == null) {
             requestPersonPoints()
         }
         if (pagingRanking.value == null) {
@@ -49,15 +53,22 @@ class PointsRankingViewModel @Inject constructor(
         async {
             repo.getMyPointsRanking()
                 .collectLatest { response ->
-                    when(response) {
-                        is HttpResult.Success -> { personalPoints.value = response.result }
-                        is HttpResult.Error -> { errorMessage.value = response.exception.message }
+                    when (response) {
+                        is HttpResult.Success -> {
+                            personalPoints.value = response.result
+                        }
+                        is HttpResult.Error -> {
+                            errorMessage.value = response.exception.message
+                        }
                     }
                 }
         }
     }
 
-    private fun ranking() = repo.getPointsRankings().cachedIn(viewModelScope)
+    private fun ranking(): PagingPoints {
+        return repo.getPointsRankings().cachedIn(viewModelScope)
+    }
+
 
     private fun records() = repo.getPointsRecords().cachedIn(viewModelScope)
 

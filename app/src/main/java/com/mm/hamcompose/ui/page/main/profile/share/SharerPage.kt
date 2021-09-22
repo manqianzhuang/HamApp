@@ -13,7 +13,6 @@ import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
@@ -58,12 +57,13 @@ fun SharerPage(
     val listState = rememberLazyListState(currentPosition)
 
     if (errorMessage != null) {
-        popSnack(
+        popupSnackBar(
             scope = rememberCoroutineScope(),
             scaffoldState = scaffoldState,
             label = SNACK_ERROR,
             message = errorMessage!!
-        ) { viewModel.errorMessage.value = null }
+        )
+        viewModel.errorMessage.value = null
     }
 
     Column(
@@ -71,7 +71,7 @@ fun SharerPage(
     ) {
         //头部栏
         HamToolBar(
-            title = points?.username ?: "作者",
+            title = points?.username ?: "",
             onBack = { navCtrl.back() },
             onRightClick = {
                 editable = !editable

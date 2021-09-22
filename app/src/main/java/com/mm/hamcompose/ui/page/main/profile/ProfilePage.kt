@@ -1,5 +1,7 @@
 package com.mm.hamcompose.ui.page.main.profile
 
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,9 +10,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +28,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.google.accompanist.placeholder.material.placeholder
 import com.mm.hamcompose.R
 import com.mm.hamcompose.data.bean.MY_USER_ID
 import com.mm.hamcompose.data.bean.PointsBean
@@ -111,7 +116,7 @@ fun HeaderPart(
                 RouteUtils.navTo(navCtrl, RouteName.SETTINGS)
             },
         )
-        UserInfoItem(myPoints, userInfo!!)
+        UserInfoItem(myPoints, userInfo)
         UserOptionsItem(
             onCollectClick = {
                 try {
@@ -141,7 +146,7 @@ fun HeaderPart(
 
 
 //我的文章
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun ContentPart(navCtrl: NavHostController, viewModel: ProfileViewModel, modifier: Modifier) {
     val myArticles by remember { viewModel.myArticles }
@@ -159,7 +164,7 @@ fun ContentPart(navCtrl: NavHostController, viewModel: ProfileViewModel, modifie
                 }
                 itemsIndexed(newList) { index, article ->
                     TextContent(
-                        text = "${index+1}. ${article.title}",
+                        text = "${index + 1}. ${article.title}",
                         modifier = Modifier
                             .padding(
                                 start = 10.dp,
@@ -186,10 +191,14 @@ fun ContentPart(navCtrl: NavHostController, viewModel: ProfileViewModel, modifie
                     .clickable {
                         RouteUtils.navTo(navCtrl, RouteName.SHARE_ARTICLE)
                     }
+                    .animateContentSize()
             ) {
-                AddIcon(modifier = Modifier
-                    .padding(bottom = 5.dp)
-                    .align(Alignment.CenterHorizontally))
+                AddIcon(
+                    modifier = Modifier
+                        .padding(bottom = 5.dp)
+                        .align(Alignment.CenterHorizontally),
+                    color = HamTheme.colors.textSecondary
+                )
                 TextContent(text = "添加文章")
             }
         }
@@ -201,7 +210,7 @@ fun ContentPart(navCtrl: NavHostController, viewModel: ProfileViewModel, modifie
 fun FooterPart(
     navCtrl: NavHostController,
     messageCount: Int,
-    onJoinUsClick: ()-> Unit,
+    onJoinUsClick: () -> Unit,
 ) {
 
     Column(
@@ -227,7 +236,8 @@ fun FooterPart(
             RouteUtils.navTo(
                 navCtrl = navCtrl,
                 destinationName = RouteName.WEB_VIEW,
-                args = WebData(title = "官方网站", url = "https://www.wanandroid.com/index"))
+                args = WebData(title = "官方网站", url = "https://www.wanandroid.com/index")
+            )
         }
         ArrowRightListItem(
             iconRes = painterResource(R.drawable.ic_data),
@@ -236,7 +246,8 @@ fun FooterPart(
             RouteUtils.navTo(
                 navCtrl = navCtrl,
                 destinationName = RouteName.WEB_VIEW,
-                args = WebData(title = "积分规则", url = "https://www.wanandroid.com/blog/show/2653"))
+                args = WebData(title = "积分规则", url = "https://www.wanandroid.com/blog/show/2653")
+            )
         }
         ArrowRightListItem(
             iconRes = painterResource(R.drawable.ic_community),
@@ -270,7 +281,7 @@ private fun ProfileToolBar(
                         .size(24.dp)
                         .clickable { onMessageIconClick.invoke() }
                 )
-                if (msgCount > 0 ) {
+                if (msgCount > 0) {
                     DotView(modifier = Modifier.align(Alignment.TopEnd))
                 }
             }
@@ -300,7 +311,7 @@ private fun ProfileToolBar(
 
 //用户基本信息
 @Composable
-private fun UserInfoItem(myPoints: PointsBean?, userInfo: UserInfo) {
+private fun UserInfoItem(myPoints: PointsBean?, userInfo: UserInfo?) {
 
     ConstraintLayout(
         modifier = Modifier
@@ -320,6 +331,10 @@ private fun UserInfoItem(myPoints: PointsBean?, userInfo: UserInfo) {
                 .width(48.dp)
                 .height(48.dp)
                 .clip(RoundedCornerShape(24.dp))
+                .placeholder(
+                    visible = userInfo == null,
+                    color = HamTheme.colors.placeholder
+                )
                 .constrainAs(icon) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
@@ -334,8 +349,14 @@ private fun UserInfoItem(myPoints: PointsBean?, userInfo: UserInfo) {
                     top.linkTo(parent.top)
                 }
         ) {
-            MainTitle(title = userInfo.username)
-            if (userInfo.email.isNotEmpty()) {
+            MainTitle(
+                title = userInfo?.username ?: "",
+                modifier = Modifier.placeholder(
+                    visible = userInfo == null,
+                    color = HamTheme.colors.placeholder
+                )
+            )
+            if (userInfo?.email?.isNotEmpty() == true) {
                 MiniTitle(
                     text = "email: ${userInfo.email}",
                     modifier = Modifier.padding(top = 5.dp)
@@ -344,26 +365,26 @@ private fun UserInfoItem(myPoints: PointsBean?, userInfo: UserInfo) {
             Row(
                 modifier = Modifier.padding(top = 5.dp)
             ) {
-                if (myPoints != null) {
-                    TagView(
-                        tagText = "Lv${myPoints.level}",
-                        tagBgColor = HamTheme.colors.themeUi,
-                        borderColor = HamTheme.colors.textSecondary
+                TagView(
+                    tagText = "Lv${myPoints?.level ?: ""}",
+                    tagBgColor = HamTheme.colors.themeUi,
+                    borderColor = HamTheme.colors.textSecondary,
+                    modifier = Modifier.placeholder(
+                        visible = myPoints == null,
+                        color = HamTheme.colors.placeholder
                     )
-                    TagView(
-                        modifier = Modifier.padding(start = 5.dp),
-                        tagText = "积分${myPoints.coinCount}",
-                        tagBgColor = HamTheme.colors.themeUi,
-                        borderColor = HamTheme.colors.textSecondary
-                    )
-                } else {
-                    TagView(
-                        modifier = Modifier.padding(start = 5.dp),
-                        tagText = "积分${userInfo.coinCount}",
-                        tagBgColor = HamTheme.colors.themeUi,
-                        borderColor = HamTheme.colors.textSecondary
-                    )
-                }
+                )
+                TagView(
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .placeholder(
+                            visible = myPoints == null,
+                            color = HamTheme.colors.placeholder
+                        ),
+                    tagText = "积分${myPoints?.coinCount ?: ""}",
+                    tagBgColor = HamTheme.colors.themeUi,
+                    borderColor = HamTheme.colors.textSecondary
+                )
             }
         }
     }

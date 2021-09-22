@@ -1,5 +1,6 @@
 package com.mm.hamcompose.ui.page.main.category.structure.tree
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +22,9 @@ import com.mm.hamcompose.theme.HamTheme
 import com.mm.hamcompose.ui.route.RouteName
 import com.mm.hamcompose.ui.route.RouteUtils
 import com.mm.hamcompose.ui.widget.LabelTextButton
+import com.mm.hamcompose.ui.widget.ListTitle
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StructurePage(
     navCtrl: NavHostController,
@@ -39,32 +42,37 @@ fun StructurePage(
             .fillMaxHeight()
             .background(HamTheme.colors.background),
         state = listState,
-        contentPadding = PaddingValues(10.dp)
+        contentPadding = PaddingValues(vertical = 10.dp)
     ) {
-        val data = systemData as List<ParentBean>
-        itemsIndexed(data) { position, systemBean ->
-            StructureItem(systemBean, onSelect = { parent->
-                viewModel.savePosition(listState.firstVisibleItemIndex)
-                RouteUtils.navTo(navCtrl, RouteName.STRUCTURE_LIST, parent)//parent.id)
-            })
-            if (position <= data.size - 1) {
-                Divider(startIndent = 10.dp, color = HamTheme.colors.divider, thickness = 0.8f.dp)
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-        }
 
+        systemData.forEachIndexed { position, chapter1 ->
+            stickyHeader { ListTitle(title = chapter1.name ?: "标题") }
+            item {
+                StructureItem(chapter1, onSelect = { parent->
+                    viewModel.savePosition(listState.firstVisibleItemIndex)
+                    RouteUtils.navTo(navCtrl, RouteName.STRUCTURE_LIST, parent)
+                })
+                if (position <= systemData.size - 1) {
+                    Divider(startIndent = 10.dp, color = HamTheme.colors.divider, thickness = 0.8f.dp)
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+        }
     }
 }
 
 @Composable
-fun StructureItem(bean: ParentBean, onSelect: (parent: ParentBean) -> Unit,) {
+fun StructureItem(
+    bean: ParentBean,
+    onSelect: (parent: ParentBean) -> Unit,
+) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
     ) {
-        Text(text = bean.name ?: "标签", fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(10.dp))
         if (!bean.children.isNullOrEmpty()) {
-            FlowRow {
+            FlowRow(
+                modifier = Modifier.padding(horizontal = 10.dp)
+            ) {
                 for (item in bean.children!!) {
                     LabelTextButton(
                         text = item.name ?: "android",

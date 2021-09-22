@@ -1,5 +1,6 @@
 package com.mm.hamcompose.ui.page.base
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
@@ -81,7 +82,7 @@ fun HamScaffold() {
             ) {
                 //首页
                 composable(route = RouteName.HOME) {
-                    HomePage(navCtrl, homeIndex) { homeIndex = it }
+                    HomePage(navCtrl, scaffoldState, homeIndex) { homeIndex = it }
                 }
 
                 //分类
@@ -136,7 +137,6 @@ fun HamScaffold() {
                     if (args != null && args is ParentBean) {
                         PublicAccountSearch(parent = args, navCtrl = navCtrl)
                     }
-
                 }
 
                 //WebView

@@ -1,5 +1,6 @@
 package com.mm.hamcompose.ui.page.main.category.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +22,9 @@ import com.mm.hamcompose.ui.route.RouteUtils
 import com.mm.hamcompose.ui.route.RouteName
 
 import com.mm.hamcompose.ui.widget.LabelTextButton
+import com.mm.hamcompose.ui.widget.ListTitle
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NaviPage(
     navCtrl: NavHostController,
@@ -33,39 +36,45 @@ fun NaviPage(
     val listState = rememberLazyListState(currentPosition)
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(HamTheme.colors.background),
+        modifier = Modifier.fillMaxSize(),
         state = listState,
-        contentPadding = PaddingValues(10.dp)
+        contentPadding = PaddingValues(vertical = 10.dp)
     ) {
-        val data = naviData as List<NaviWrapper>
-        itemsIndexed(data) { index, naviBean ->
-            NaviItem(naviBean, onSelected = {
-                viewModel.savePosition(listState.firstVisibleItemIndex)
-                RouteUtils.navTo(navCtrl, RouteName.WEB_VIEW, it)
-            })
-            if (index<=data.size-1) {
-                Divider(startIndent = 10.dp, color = HamTheme.colors.divider, thickness = 0.8f.dp)
+        if (naviData.isNotEmpty()) {
+            naviData.forEachIndexed { index, naviBean ->
+                stickyHeader { ListTitle(title = naviBean.name ?: "标题") }
+                item {
+                    NaviItem(naviBean, onSelected = {
+                        viewModel.savePosition(listState.firstVisibleItemIndex)
+                        RouteUtils.navTo(navCtrl, RouteName.WEB_VIEW, it)
+                    })
+                    if (index <= naviData.size - 1) {
+                        Divider(
+                            startIndent = 10.dp,
+                            color = HamTheme.colors.divider,
+                            thickness = 0.8f.dp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
             }
-            Spacer(modifier = Modifier.height(10.dp))
         }
+
     }
 }
 
 @Composable
 fun NaviItem(wrapper: NaviWrapper, onSelected: (WebData) -> Unit) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
     ) {
-        Text(text = wrapper.name?: "标签", fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(10.dp))
         if (!wrapper.articles.isNullOrEmpty()) {
-            FlowRow {
-                for(item in wrapper.articles!!) {
+            FlowRow(
+                modifier = Modifier.padding(top = 10.dp)
+            ) {
+                for (item in wrapper.articles!!) {
                     LabelTextButton(
-                        text = item.title?:"android",
+                        text = item.title ?: "android",
                         modifier = Modifier.padding(start = 5.dp, bottom = 5.dp),
                         onClick = {
                             val webData = WebData(item.title, item.link!!)

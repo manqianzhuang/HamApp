@@ -28,6 +28,7 @@ private val DarkColorPalette = HamColors(
     primaryBtnBg = black1,
     secondBtnBg = white1,
     hot = red,
+    placeholder = grey1,
 )
 
 //白天主题
@@ -47,6 +48,7 @@ private val DarkColorPalette = HamColors(
     primaryBtnBg = themeColors[0],
     secondBtnBg = white3,
     hot = red,
+    placeholder = grey1,
 )
 var LocalHamColors = compositionLocalOf {
     LightColorPalette
@@ -80,6 +82,7 @@ class HamColors(
     primaryBtnBg: Color,
     secondBtnBg: Color,
     hot: Color,
+    placeholder: Color,
 ) {
     var themeUi: Color by mutableStateOf(themeUi)
         internal set
@@ -111,6 +114,9 @@ class HamColors(
         private set
     var hot: Color by mutableStateOf(hot)
         private set
+    var placeholder: Color by mutableStateOf(placeholder)
+        private set
+
 }
 
 
@@ -146,6 +152,7 @@ fun HamTheme(
     val primaryBtnBg = animateColorAsState(targetColors.primaryBtnBg, TweenSpec(600))
     val secondBtnBg = animateColorAsState(targetColors.secondBtnBg, TweenSpec(600))
     val hot = animateColorAsState(targetColors.hot, TweenSpec(600))
+    val placeholder = animateColorAsState(targetColors.placeholder, TweenSpec(600))
     val hamColors = HamColors(
         themeUi = themeUi.value,
         background = background.value,
@@ -161,7 +168,8 @@ fun HamTheme(
         warn = warn.value,
         success = success.value,
         error = error.value,
-        hot = hot.value
+        hot = hot.value,
+        placeholder = placeholder.value
     )
 
     val systemUiCtrl = rememberSystemUiController()

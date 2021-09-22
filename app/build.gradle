@@ -75,6 +75,9 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanistVersion"
     //流式布局
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanistVersion"
+    //placeholder
+    implementation "com.google.accompanist:accompanist-placeholder-material:$accompanistVersion"
+    //implementation "com.google.accompanist:accompanist-placeholder:$accompanistVersion"
 
     //约束布局
     implementation "androidx.constraintlayout:constraintlayout-compose:$constraintComposeVersion"

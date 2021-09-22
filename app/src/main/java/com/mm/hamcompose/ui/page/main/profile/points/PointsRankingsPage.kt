@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -40,6 +41,7 @@ fun PointsRankingPage(
 
     viewModel.start()
     val titles by remember { viewModel.titles }
+    val isLoading by remember { viewModel.loading }
     val rankings = viewModel.pagingRanking.value?.collectAsLazyPagingItems()
     val records = viewModel.pagingRecords.value?.collectAsLazyPagingItems()
     val personPoints by remember { viewModel.personalPoints }
@@ -70,16 +72,19 @@ fun PointsRankingPage(
         HorizontalPager(state = pagerState) { page ->
             viewModel.tabIndex.value = pagerState.currentPage
             when (page) {
-                0 -> RankingScreen(rankings, personPoints)
+                0 -> RankingScreen(isLoading, rankings, personPoints)
                 1 -> RecordsScreen(records, personPoints?.coinCount)
             }
         }
-
     }
 }
 
 @Composable
-private fun RankingScreen(rankings: LazyPagingItems<PointsBean>?, person: PointsBean?) {
+private fun RankingScreen(
+    isLoading: Boolean,
+    rankings: LazyPagingItems<PointsBean>?,
+    person: PointsBean?
+) {
 
     Column(
         modifier = Modifier
@@ -141,53 +146,69 @@ private fun RankingScreen(rankings: LazyPagingItems<PointsBean>?, person: Points
             }
         }
 
-        LazyColumn {
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center).size(48.dp),
+                    color = HamTheme.colors.themeUi
+                )
+            }
+        } else {
             if (rankings != null) {
-                itemsIndexed(rankings) { index, rank ->
-                    Row(
-                        modifier = Modifier.padding(bottom = 10.dp)
-                    ) {
+                LazyColumn {
+                    itemsIndexed(rankings) { index, rank ->
                         Row(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.padding(bottom = 10.dp)
                         ) {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                            ) {
+                                TextContent(
+                                    text = rank?.username ?: "username",
+                                    color = if (index < 3) HamTheme.colors.textPrimary else HamTheme.colors.textSecondary,
+                                    maxLines = 1,
+                                )
+                                if (index < 3) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_hot),
+                                        contentDescription = null,
+                                        tint = HamTheme.colors.hot,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+
                             TextContent(
-                                text = rank?.username ?: "username",
+                                text = rank?.coinCount ?: "points",
+                                textAlign = TextAlign.Center,
                                 color = if (index < 3) HamTheme.colors.textPrimary else HamTheme.colors.textSecondary,
                                 maxLines = 1,
                             )
-                            if (index < 3) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_hot),
-                                    contentDescription = null,
-                                    tint = HamTheme.colors.hot,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
+                            TextContent(
+                                text = rank?.rank ?: "ranking",
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.End,
+                                color = if (index < 3) HamTheme.colors.textPrimary else HamTheme.colors.textSecondary,
+                                maxLines = 1,
+                            )
                         }
-
-                        TextContent(
-                            text = rank?.coinCount ?: "points",
-                            textAlign = TextAlign.Center,
-                            color = if (index < 3) HamTheme.colors.textPrimary else HamTheme.colors.textSecondary,
-                            maxLines = 1,
-                        )
-                        TextContent(
-                            text = rank?.rank ?: "ranking",
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.End,
-                            color = if (index < 3) HamTheme.colors.textPrimary else HamTheme.colors.textSecondary,
-                            maxLines = 1,
-                        )
                     }
                 }
             }
+            else {
+
+            }
         }
+
 
     }
 }
 
 @Composable
-private fun RecordsScreen(records: LazyPagingItems<PointsBean>?, points: String?) {
+private fun RecordsScreen(
+    records: LazyPagingItems<PointsBean>?,
+    points: String?,
+) {
 
     Column(
         modifier = Modifier

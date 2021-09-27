@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -38,6 +39,15 @@ fun HomePage(
     Column {
         if (isShowSearchBar) {
             HomeSearchBar(
+                onUserIconClick = {
+                    navCtrl.navigate(RouteName.PROFILE) {
+                        popUpTo(navCtrl.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 onSearchClick = {
                     RouteUtils.navTo(navCtrl, RouteName.ARTICLE_SEARCH + "/111")
                 },

@@ -10,11 +10,12 @@ room, accompanist, hilt, gson, glide/picasso, navigation.
 首页（推荐、广场、项目、问答），
 分类（体系、导航、公众号，分享文章），
 收藏（网址、文章），
-我的（我的文章、历史记录、积分排行、添加文章、设置、消息、主题色、清缓存等）
+我的（我的文章、积分排行、历史浏览、添加文章、设置、消息、主题色、清缓存等）
+登录、登出、注册
 
 
 #### 软件架构
-Mvvm, Android Studio ArcticFox
+Mvvm, Composable + viewModel + repository 
 
 
 #### 关于项目
@@ -30,6 +31,6 @@ Mvvm, Android Studio ArcticFox
 3.  欢迎各位提PR，我会抽时间不断优化代码和修复bug。如有请教，请邮件联系
 
 #### TODO
-1. 添加动画 = SUSPEND
-6. 我的消息开发 = WAIT
+1. 添加动画 = WAIT
+2. 我的消息开发 = WAIT
 

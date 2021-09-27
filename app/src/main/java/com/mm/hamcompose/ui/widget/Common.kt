@@ -105,6 +105,7 @@ fun HamToolBar(
 
 @Composable
 fun HomeSearchBar(
+    onUserIconClick: ()-> Unit,
     onSearchClick: () -> Unit,
     onRightIconClick: () -> Unit,
 ) {
@@ -116,7 +117,7 @@ fun HomeSearchBar(
     ) {
         Image(
             painter = painterResource(id = R.drawable.wukong),
-            contentDescription = "抽屉",
+            contentDescription = "User",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .padding(start = 10.dp)
@@ -124,6 +125,9 @@ fun HomeSearchBar(
                 .height(28.dp)
                 .clip(RoundedCornerShape(14.dp))
                 .align(alignment = Alignment.CenterVertically)
+                .clickable {
+                    onUserIconClick.invoke()
+                }
         )
         //搜索框
         Row(

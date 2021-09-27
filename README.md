@@ -21,8 +21,9 @@ Mvvm, Composable + viewModel + repository
 #### 关于项目
 
 1.  项目地址： https://github.com/manqianzhuang/HamApp.git
-2.  联系方式： ganzhuangman@gmail.com
-3.  API提供： 鸿洋（WanAndroid开放api）
+2.  apk地址： https://www.pgyer.com/F9NX
+3.  联系方式： ganzhuangman@gmail.com
+4.  API提供： 鸿洋（WanAndroid开放api）
 
 #### 使用说明
 

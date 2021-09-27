@@ -17,6 +17,9 @@ room, accompanist, hilt, gson, glide/picasso, navigation.
 #### 软件架构
 Mvvm, Composable + viewModel + repository 
 
+#### ScreenShot
+https://github.com/manqianzhuang/HamApp/tree/origin/screenshot
+
 
 #### 关于项目
 

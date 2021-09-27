@@ -33,6 +33,7 @@ fun StructurePage(
 
     viewModel.start()
     val systemData by remember { viewModel.list }
+    val isLoading by remember { viewModel.loading }
     val currentPosition by remember { viewModel.currentListIndex }
     val listState = rememberLazyListState(currentPosition)
 
@@ -45,17 +46,23 @@ fun StructurePage(
         contentPadding = PaddingValues(vertical = 10.dp)
     ) {
 
-        systemData.forEachIndexed { position, chapter1 ->
-            stickyHeader { ListTitle(title = chapter1.name ?: "标题") }
-            item {
-                StructureItem(chapter1, onSelect = { parent->
-                    viewModel.savePosition(listState.firstVisibleItemIndex)
-                    RouteUtils.navTo(navCtrl, RouteName.STRUCTURE_LIST, parent)
-                })
-                if (position <= systemData.size - 1) {
-                    Divider(startIndent = 10.dp, color = HamTheme.colors.divider, thickness = 0.8f.dp)
+        if (isLoading) {
+            items(5) {
+                StructureItem(ParentBean(null), isLoading = true)
+            }
+        } else {
+            systemData.forEachIndexed { position, chapter1 ->
+                stickyHeader { ListTitle(title = chapter1.name ?: "标题") }
+                item {
+                    StructureItem(chapter1, onSelect = { parent->
+                        viewModel.savePosition(listState.firstVisibleItemIndex)
+                        RouteUtils.navTo(navCtrl, RouteName.STRUCTURE_LIST, parent)
+                    })
+                    if (position <= systemData.size - 1) {
+                        Divider(startIndent = 10.dp, color = HamTheme.colors.divider, thickness = 0.8f.dp)
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
-                Spacer(modifier = Modifier.height(10.dp))
             }
         }
     }
@@ -64,26 +71,43 @@ fun StructurePage(
 @Composable
 fun StructureItem(
     bean: ParentBean,
-    onSelect: (parent: ParentBean) -> Unit,
+    isLoading: Boolean = false,
+    onSelect: (parent: ParentBean) -> Unit = {},
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
     ) {
-        if (!bean.children.isNullOrEmpty()) {
+        if (isLoading) {
+            ListTitle(title = "我都标题", isLoading = true)
             FlowRow(
                 modifier = Modifier.padding(horizontal = 10.dp)
             ) {
-                for (item in bean.children!!) {
+                for (i in 0..7) {
                     LabelTextButton(
-                        text = item.name ?: "android",
+                        text = "android",
                         modifier = Modifier.padding(start = 5.dp, bottom = 5.dp),
-                        onClick = {
-                            onSelect(item)
-                        }
+                        isLoading = true
                     )
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
+        } else {
+            if (!bean.children.isNullOrEmpty()) {
+                FlowRow(
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                ) {
+                    for (item in bean.children!!) {
+                        LabelTextButton(
+                            text = item.name ?: "android",
+                            modifier = Modifier.padding(start = 5.dp, bottom = 5.dp),
+                            onClick = {
+                                onSelect(item)
+                            }
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+            }
         }
 
     }

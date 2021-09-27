@@ -3,6 +3,7 @@ package com.mm.hamcompose.data.bean
 import android.os.Parcelable
 import androidx.room.*
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.mm.hamcompose.data.db.DbConst
 import com.mm.hamcompose.theme.HamTheme
@@ -176,46 +177,53 @@ data class PointsBean(
 )
 
 data class CollectBean(
-    val author: String,
-    val chapterId: Int,
-    val chapterName: String,
-    val courseId: Int,
-    val desc: String,
-    val envelopePic: String,
-    val id: Int,
-    val link: String,
-    val niceDate: String,
-    val origin: String,
-    val originId: Int,
-    val publishTime: Long,
-    val title: String,
-    val userId: Int,
-    val visible: Int,
-    val zan: Int
+    var author: String = "",
+    var chapterId: Int = 0,
+    var chapterName: String = "",
+    var courseId: Int = 0,
+    var desc: String = "",
+    var envelopePic: String = "",
+    var id: Int = 0,
+    var link: String = "",
+    var niceDate: String = "",
+    var origin: String = "",
+    var originId: Int = 0,
+    var publishTime: Long = 0,
+    var title: String = "",
+    var userId: Int = 0,
+    var visible: Int = 0,
+    var zan: Int = 0
 )
 
 
 /********************* Begin: Welfare Data ***********************/
 abstract class GankBasedBean<T : Any?> {
-    val error: Boolean = false
-    abstract var results: T?
+    val page: Int = 1
+    @SerializedName("page_count") val pageSize: Int = 20
+    val status: Int = 100
+    @SerializedName("total_counts") val totalSize: Int = 96
+    abstract var data: T?
 }
 
 data class WelfareBean(
-    override var results: List<WelfareData>?
+    override var data: List<WelfareData>?
 ) : GankBasedBean<List<WelfareData>>()
 
 @Parcelize
 data class WelfareData(
-    val _id: String,
-    val createAt: String?,
-    val desc: String?,
-    val publishedAt: String?,
-    val source: String?,
-    val type: String?,
-    val url: String,
-    val used: Boolean,
-    val who: String?
+    @SerializedName("_id") var id: String?,
+    var author: String?,
+    var category: String?,
+    var createAt: String?,
+    var desc: String?,
+    var images: MutableList<String>,
+    var likeCounts: Int,
+    var publishedAt: String?,
+    var stars: Int,
+    var title: String?,
+    var type: String?,
+    var url: String?,
+    var views: Int,
 ) : Parcelable
 /********************* Begin: Welfare Data ***********************/
 

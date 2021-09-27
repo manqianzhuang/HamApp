@@ -28,6 +28,8 @@ import com.mm.hamcompose.R
 import com.mm.hamcompose.data.bean.PointsBean
 import com.mm.hamcompose.theme.H5
 import com.mm.hamcompose.theme.HamTheme
+import com.mm.hamcompose.ui.route.RouteName
+import com.mm.hamcompose.ui.route.RouteUtils
 import com.mm.hamcompose.ui.route.RouteUtils.back
 import com.mm.hamcompose.ui.widget.*
 import kotlinx.coroutines.launch
@@ -41,8 +43,8 @@ fun PointsRankingPage(
 
     viewModel.start()
     val titles by remember { viewModel.titles }
-    val isLoading by remember { viewModel.loading }
     val rankings = viewModel.pagingRanking.value?.collectAsLazyPagingItems()
+    val isLoaded = rankings?.loadState?.prepend?.endOfPaginationReached ?: false
     val records = viewModel.pagingRecords.value?.collectAsLazyPagingItems()
     val personPoints by remember { viewModel.personalPoints }
     val tabIndex by remember { viewModel.tabIndex }
@@ -72,7 +74,7 @@ fun PointsRankingPage(
         HorizontalPager(state = pagerState) { page ->
             viewModel.tabIndex.value = pagerState.currentPage
             when (page) {
-                0 -> RankingScreen(isLoading, rankings, personPoints)
+                0 -> RankingScreen(isLoaded, rankings, personPoints, navCtrl)
                 1 -> RecordsScreen(records, personPoints?.coinCount)
             }
         }
@@ -81,9 +83,10 @@ fun PointsRankingPage(
 
 @Composable
 private fun RankingScreen(
-    isLoading: Boolean,
+    isLoaded: Boolean,
     rankings: LazyPagingItems<PointsBean>?,
-    person: PointsBean?
+    person: PointsBean?,
+    navCtrl: NavHostController
 ) {
 
     Column(
@@ -124,7 +127,7 @@ private fun RankingScreen(
                 modifier = Modifier.padding(bottom = 10.dp)
             ) {
                 TextContent(
-                    text = "${person.username}",
+                    text = person.username,
                     modifier = Modifier.weight(1f),
                     color = HamTheme.colors.themeUi,
                     maxLines = 1,
@@ -146,10 +149,15 @@ private fun RankingScreen(
             }
         }
 
-        if (isLoading) {
-            Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+        if (!isLoaded) {
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+            ) {
                 CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center).size(48.dp),
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(48.dp),
                     color = HamTheme.colors.themeUi
                 )
             }
@@ -158,7 +166,11 @@ private fun RankingScreen(
                 LazyColumn {
                     itemsIndexed(rankings) { index, rank ->
                         Row(
-                            modifier = Modifier.padding(bottom = 10.dp)
+                            modifier = Modifier
+                                .padding(bottom = 10.dp)
+                                .clickable {
+                                    RouteUtils.navTo(navCtrl, RouteName.SHARER, rank?.userId)
+                                }
                         ) {
                             Row(
                                 modifier = Modifier.weight(1f),
@@ -177,7 +189,6 @@ private fun RankingScreen(
                                     )
                                 }
                             }
-
                             TextContent(
                                 text = rank?.coinCount ?: "points",
                                 textAlign = TextAlign.Center,
@@ -196,7 +207,7 @@ private fun RankingScreen(
                 }
             }
             else {
-
+                EmptyView()
             }
         }
 
@@ -256,7 +267,8 @@ private fun RecordsScreen(
                                 1 -> HamTheme.colors.info
                                 2 -> HamTheme.colors.success
                                 else -> HamTheme.colors.hot
-                            }
+                            },
+                            modifier = Modifier.padding(start = 10.dp)
                         )
 
                     }

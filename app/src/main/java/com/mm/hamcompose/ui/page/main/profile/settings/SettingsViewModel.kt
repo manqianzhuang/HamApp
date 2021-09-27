@@ -1,22 +1,18 @@
 package com.mm.hamcompose.ui.page.main.profile.settings
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
-import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SPUtils
 import com.mm.hamcompose.data.bean.UserInfo
 import com.mm.hamcompose.data.db.user.UserInfoDatabase
 import com.mm.hamcompose.data.http.HttpResult
+import com.mm.hamcompose.data.store.DataStoreUtils
 import com.mm.hamcompose.repository.HttpRepository
-import com.mm.hamcompose.theme.HamTheme
 import com.mm.hamcompose.theme.THEME_COLOR_KEY
-import com.mm.hamcompose.theme.themeColors
 import com.mm.hamcompose.ui.page.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -29,6 +25,7 @@ class SettingsViewModel @Inject constructor(
 
     val cacheSize = mutableStateOf(0)
 
+    var logout = mutableStateOf(false)
     var themeIndex = mutableStateOf(SPUtils.getInstance().getInt(THEME_COLOR_KEY, 0))
     var selectTheme = mutableStateOf<Color?>(null)
 
@@ -57,8 +54,10 @@ class SettingsViewModel @Inject constructor(
     private fun clearUserInfo() {
         async {
             withContext(Dispatchers.IO) {
-                val deleteResult = db.userInfoDao().deleteAllUserInfo()
-                LogUtils.i("deleteResult = $deleteResult")
+                db.userInfoDao().deleteAllUserInfo()
+                DataStoreUtils.clear()
+                delay(10)
+                logout.value = true
             }
         }
     }

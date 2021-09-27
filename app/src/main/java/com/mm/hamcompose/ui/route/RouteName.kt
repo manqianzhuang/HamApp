@@ -8,7 +8,6 @@ object RouteName {
 
     const val STRUCTURE_LIST = "structure_list"
     const val ARTICLE_SEARCH = "article_search"
-    const val GIRL_PHOTO = "girl_photo"
     const val PUB_ACCOUNT_DETAIL = "pub_account_detail"
     const val PUB_ACCOUNT_SEARCH = "pub_account_search"
     const val WEB_VIEW = "web_view"
@@ -22,5 +21,9 @@ object RouteName {
     const val SHARER = "sharer"
     const val SHARE_ARTICLE = "share_article"
     const val HISTORY = "history"
+
+    const val GIRL_PHOTO = "girl_photo"
+    const val GIRL_INFO = "girl_info"
+
 
 }

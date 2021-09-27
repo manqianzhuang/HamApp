@@ -1,25 +1,24 @@
 package com.mm.hamcompose.ui.page.base
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
-import com.blankj.utilcode.util.SPUtils
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.gson.Gson
 import com.mm.hamcompose.data.bean.ParentBean
 import com.mm.hamcompose.data.bean.WebData
+import com.mm.hamcompose.data.bean.WelfareData
 import com.mm.hamcompose.theme.HamTheme
-import com.mm.hamcompose.theme.THEME_COLOR_KEY
-import com.mm.hamcompose.theme.themeColors
-import com.mm.hamcompose.ui.page.girls.GirlPhotoPage
+import com.mm.hamcompose.ui.page.girls.info.GirlInfoPage
+import com.mm.hamcompose.ui.page.girls.list.GirlPhotoPage
 import com.mm.hamcompose.ui.page.main.category.CategoryPage
 import com.mm.hamcompose.ui.page.main.category.pubaccount.author.PublicAccountAuthorPage
 import com.mm.hamcompose.ui.page.main.category.pubaccount.search.PublicAccountSearch
@@ -34,7 +33,7 @@ import com.mm.hamcompose.ui.page.main.profile.history.HistoryPage
 import com.mm.hamcompose.ui.page.main.profile.message.MessagePage
 import com.mm.hamcompose.ui.page.main.profile.points.PointsRankingPage
 import com.mm.hamcompose.ui.page.main.profile.settings.SettingsPage
-import com.mm.hamcompose.ui.page.main.profile.share.SharerPage
+import com.mm.hamcompose.ui.page.main.profile.sharer.SharerPage
 import com.mm.hamcompose.ui.page.main.profile.user.LoginPage
 import com.mm.hamcompose.ui.page.main.profile.user.RegisterPage
 import com.mm.hamcompose.ui.page.webview.WebViewPage
@@ -105,7 +104,7 @@ fun HamScaffold() {
                     route = RouteName.ARTICLE_SEARCH + "/{id}",
                     arguments = listOf(navArgument("id") { type = NavType.IntType })
                 ) {
-                    SearchPage(navCtrl)
+                    SearchPage(navCtrl, scaffoldState)
                 }
 
                 //看妹子
@@ -113,11 +112,27 @@ fun HamScaffold() {
                     GirlPhotoPage(navCtrl)
                 }
 
+                //看妹子(大图)
+                composable(route = RouteName.GIRL_INFO) {
+                    val args = RouteUtils.getArguments<Any>(navCtrl)
+                    if (args != null && args is WelfareData) {
+                        GirlInfoPage(
+                            welfare = args,
+                            navCtrl = navCtrl,
+                            scaffoldState = scaffoldState
+                        )
+                    }
+                }
+
                 //公众号详情
                 composable(route = RouteName.PUB_ACCOUNT_DETAIL) {
                     val args = RouteUtils.getArguments<Any>(navCtrl)
                     if (args != null && args is ParentBean) {
-                        PublicAccountAuthorPage(parent = args, navCtrl = navCtrl)
+                        PublicAccountAuthorPage(
+                            parent = args,
+                            navCtrl = navCtrl,
+                            scaffoldState = scaffoldState
+                        )
                     }
 
                 }
@@ -126,7 +141,11 @@ fun HamScaffold() {
                 composable(route = RouteName.STRUCTURE_LIST) {
                     val args = RouteUtils.getArguments<Any>(navCtrl)
                     if (args != null && args is ParentBean) {
-                        StructureListPage(parent = args, navCtrl = navCtrl)
+                        StructureListPage(
+                            parent = args,
+                            navCtrl = navCtrl,
+                            scaffoldState = scaffoldState
+                        )
                     }
 
                 }
@@ -135,7 +154,11 @@ fun HamScaffold() {
                 composable(route = RouteName.PUB_ACCOUNT_SEARCH) {
                     val args = RouteUtils.getArguments<Any>(navCtrl)
                     if (args != null && args is ParentBean) {
-                        PublicAccountSearch(parent = args, navCtrl = navCtrl)
+                        PublicAccountSearch(
+                            parent = args,
+                            navCtrl = navCtrl,
+                            scaffoldState = scaffoldState
+                        )
                     }
                 }
 

@@ -9,7 +9,6 @@ import javax.inject.Inject
 
 class GirlPhotoPagingSource @Inject constructor(
     private val apiService: HttpService,
-    private val type: String,
 ): PagingSource<Int, WelfareData>() {
 
     override fun getRefreshKey(state: PagingState<Int, WelfareData>): Int? = null
@@ -18,10 +17,10 @@ class GirlPhotoPagingSource @Inject constructor(
         return try {
             LogUtils.e("currentPage= ${params.key}, size=${params.loadSize}")
             val page = params.key?: 0
-            val response = apiService.getWelfareList(type, params.loadSize, page)
-            val isNextPage = response.results!!.isNotEmpty()
+            val response = apiService.getWelfareList("Girl", "Girl", page, params.loadSize)
+            val isNextPage = response.data!!.isNotEmpty()
             LoadResult.Page(
-                data = response.results!!,
+                data = response.data!!,
                 prevKey = if (page>0) page-1 else null,
                 nextKey = if (isNextPage) page+1 else null
             )

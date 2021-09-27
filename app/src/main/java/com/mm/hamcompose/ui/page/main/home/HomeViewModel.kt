@@ -42,5 +42,9 @@ class HomeViewModel @Inject constructor() : BaseViewModel<HomeThemeBean>() {
 
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        println("HomeViewModel ==> onClear")
+    }
 
 }

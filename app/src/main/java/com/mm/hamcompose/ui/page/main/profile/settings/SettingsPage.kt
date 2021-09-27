@@ -36,6 +36,7 @@ fun SettingsPage(
     val context = LocalContext.current
 
     var clickExitApp by remember { mutableStateOf(false) }
+    var logout by remember { viewModel.logout }
     var isClearCache by remember { mutableStateOf(false) }
     var isAboutMe by remember { mutableStateOf(false) }
     var clickPalette by remember { mutableStateOf(false) }
@@ -50,6 +51,12 @@ fun SettingsPage(
         HamTheme.colors.themeUi = selectTheme!!
         HamTheme.colors.primaryBtnBg = selectTheme!!
         viewModel.selectTheme.value = null
+    }
+
+    if (logout) {
+        println("SettingsPage ===>  logout")
+        navCtrl.popBackStack()
+        viewModel.logout.value = false
     }
 
     coroutineScope.launch {

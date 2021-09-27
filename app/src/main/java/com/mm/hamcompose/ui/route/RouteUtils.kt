@@ -1,16 +1,9 @@
 package com.mm.hamcompose.ui.route
 
-import android.icu.text.SymbolTable
 import android.os.Bundle
 import android.os.Parcelable
-import androidx.navigation.*
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.google.gson.Gson
-import com.mm.hamcompose.data.bean.WebData
-import org.json.JSONObject
-import java.lang.StringBuilder
-import java.util.LinkedHashMap
+import androidx.navigation.NavHostController
 
 /**
  * 路由名称

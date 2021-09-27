@@ -32,6 +32,7 @@ fun NaviPage(
 ) {
     viewModel.start()
     val naviData by remember { viewModel.list }
+    val isLoading by remember { viewModel.loading }
     val currentPosition by remember { viewModel.currentListIndex }
     val listState = rememberLazyListState(currentPosition)
 
@@ -40,7 +41,14 @@ fun NaviPage(
         state = listState,
         contentPadding = PaddingValues(vertical = 10.dp)
     ) {
-        if (naviData.isNotEmpty()) {
+        if (isLoading) {
+            items(6) {
+                NaviItem(
+                    wrapper = NaviWrapper(null, -1, ""),
+                    isLoading = isLoading,
+                )
+            }
+        } else {
             naviData.forEachIndexed { index, naviBean ->
                 stickyHeader { ListTitle(title = naviBean.name ?: "标题") }
                 item {
@@ -59,31 +67,53 @@ fun NaviPage(
                 }
             }
         }
-
     }
 }
 
 @Composable
-fun NaviItem(wrapper: NaviWrapper, onSelected: (WebData) -> Unit) {
+fun NaviItem(
+    wrapper: NaviWrapper,
+    isLoading: Boolean = false,
+    onSelected: (WebData) -> Unit = {}
+) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
     ) {
-        if (!wrapper.articles.isNullOrEmpty()) {
+        if (isLoading) {
+            ListTitle(title = "我是标题")
             FlowRow(
                 modifier = Modifier.padding(top = 10.dp)
             ) {
-                for (item in wrapper.articles!!) {
+                for (i in 0..7) {
                     LabelTextButton(
-                        text = item.title ?: "android",
+                        text =  "android",
                         modifier = Modifier.padding(start = 5.dp, bottom = 5.dp),
-                        onClick = {
-                            val webData = WebData(item.title, item.link!!)
-                            onSelected(webData)
-                        }
+                        isLoading = true
                     )
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
+        } else {
+            if (!wrapper.articles.isNullOrEmpty()) {
+                FlowRow(
+                    modifier = Modifier.padding(top = 10.dp)
+                ) {
+                    for (item in wrapper.articles!!) {
+                        LabelTextButton(
+                            text = item.title ?: "android",
+                            modifier = Modifier.padding(start = 5.dp, bottom = 5.dp),
+                            onClick = {
+                                val webData = WebData(item.title, item.link!!)
+                                onSelected(webData)
+                            }
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+            }
         }
+
     }
 }

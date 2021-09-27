@@ -8,7 +8,7 @@ import com.mm.hamcompose.data.bean.ParentBean
 import com.mm.hamcompose.data.http.HttpResult
 import com.mm.hamcompose.repository.HttpRepository
 import com.mm.hamcompose.repository.PagingArticle
-import com.mm.hamcompose.ui.page.base.BaseViewModel
+import com.mm.hamcompose.ui.page.base.BaseCollectViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProjectViewModel @Inject constructor(
     private var httpRepo: HttpRepository
-): BaseViewModel<ParentBean>() {
+): BaseCollectViewModel<ParentBean>(httpRepo) {
 
     var tabIndex = mutableStateOf(-1)
     var isRefreshing = mutableStateOf(true)
@@ -52,8 +52,6 @@ class ProjectViewModel @Inject constructor(
     private fun loadCategory() {
         async {
             httpRepo.getProjectCategory()
-                .catch { stopLoading() }
-                .onCompletion { stopLoading() }
                 .collectLatest { response ->
                     when (response) {
                         is HttpResult.Success -> {
@@ -61,7 +59,7 @@ class ProjectViewModel @Inject constructor(
                             tabIndex.value = 0
                         }
                         is HttpResult.Error -> {
-
+                            println(response.exception.message)
                         }
                     }
                 }

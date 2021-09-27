@@ -19,6 +19,8 @@ abstract class BaseCollectViewModel<T> constructor(
                         if (response.exception.message==nullNotice) {
                             println("收藏成功(id=$id)")
                             message.value = "收藏成功"
+                        } else {
+                            message.value = response.exception.message ?: "未知异常"
                         }
                     }
                 }
@@ -37,6 +39,8 @@ abstract class BaseCollectViewModel<T> constructor(
                         if (response.exception.message==nullNotice) {
                             println("取消收藏(id=$id)")
                             message.value = "取消收藏"
+                        } else {
+                            message.value = response.exception.message ?: "未知异常"
                         }
                     }
                 }

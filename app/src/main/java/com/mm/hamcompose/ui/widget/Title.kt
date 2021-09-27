@@ -9,16 +9,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import com.google.accompanist.placeholder.material.placeholder
 import com.mm.hamcompose.theme.*
 
 @Composable
-fun LargeTitle(title: String, modifier: Modifier = Modifier, color: Color? = null) {
+fun LargeTitle(
+    title: String,
+    modifier: Modifier = Modifier,
+    color: Color? = null,
+    isLoading: Boolean = false
+) {
     Title(
         title = title,
         modifier = modifier,
         fontSize = H3,
         color = color ?: HamTheme.colors.textPrimary,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        isLoading = isLoading
     )
 }
 
@@ -28,7 +35,8 @@ fun MainTitle(
     modifier: Modifier = Modifier,
     maxLine: Int = 1,
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = HamTheme.colors.textPrimary
+    color: Color = HamTheme.colors.textPrimary,
+    isLoading: Boolean = false
 ) {
     Title(
         title = title,
@@ -37,7 +45,8 @@ fun MainTitle(
         color = color,
         fontWeight = FontWeight.SemiBold,
         maxLine = maxLine,
-        textAlign = textAlign
+        textAlign = textAlign,
+        isLoading = isLoading
     )
 }
 
@@ -46,14 +55,16 @@ fun MediumTitle(
     title: String,
     modifier: Modifier = Modifier,
     color: Color = HamTheme.colors.textPrimary,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
+    isLoading: Boolean = false
 ) {
     Title(
         title = title,
         fontSize = H5,
         modifier = modifier,
         color = color,
-        textAlign = textAlign
+        textAlign = textAlign,
+        isLoading = isLoading
     )
 }
 
@@ -65,6 +76,7 @@ fun TextContent(
     maxLines: Int = 99,
     textAlign: TextAlign = TextAlign.Start,
     canCopy: Boolean = false,
+    isLoading: Boolean = false
 ) {
     if (canCopy) {
         SelectionContainer {
@@ -74,7 +86,8 @@ fun TextContent(
                 fontSize = H6,
                 color = color,
                 maxLine = maxLines,
-                textAlign = textAlign
+                textAlign = textAlign,
+                isLoading = isLoading
             )
         }
     } else {
@@ -84,7 +97,8 @@ fun TextContent(
             fontSize = H6,
             color = color,
             maxLine = maxLines,
-            textAlign = textAlign
+            textAlign = textAlign,
+            isLoading = isLoading
         )
     }
 
@@ -97,6 +111,7 @@ fun MiniTitle(
     color: Color = HamTheme.colors.textSecondary,
     maxLines: Int = 1,
     textAlign: TextAlign = TextAlign.Start,
+    isLoading: Boolean = false
 ) {
     Title(
         title = text,
@@ -104,7 +119,8 @@ fun MiniTitle(
         fontSize = H7,
         color = color,
         maxLine = maxLines,
-        textAlign = textAlign
+        textAlign = textAlign,
+        isLoading = isLoading,
     )
 }
 
@@ -116,11 +132,16 @@ fun Title(
     color: Color = HamTheme.colors.textSecondary,
     fontWeight: FontWeight = FontWeight.Normal,
     maxLine: Int = 1,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
+    isLoading: Boolean = false
 ) {
     Text(
         text = title,
-        modifier = modifier,
+        modifier = modifier
+            .placeholder(
+                visible = isLoading,
+                color = HamTheme.colors.placeholder
+            ),
         fontSize = fontSize,
         color = color,
         maxLines = maxLine,

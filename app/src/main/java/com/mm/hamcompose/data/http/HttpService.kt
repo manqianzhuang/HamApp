@@ -233,11 +233,12 @@ interface HttpService {
     suspend fun getBasicUserInfo(): BasicBean<BasicUserInfo>
 
     // 福利
-    @GET("https://gank.io/api/data/{type}/{pageCount}/{page}")
+    @GET("https://gank.io/api/v2/data/category/{category}/type/{type}/page/{page}/count/{pageSize}")
     suspend fun getWelfareList(
-        @Path(value = "type", encoded = false) type: String,
-        @Path("pageCount") pageCount: Int,
-        @Path("page") page: Int
+        @Path(value = "category", encoded = false) category: String = "Girl",
+        @Path(value = "type", encoded = false) type: String = "Girl",
+        @Path("page") page: Int,
+        @Path("pageSize") pageCount: Int = 40
     ): WelfareBean
 
 

@@ -63,11 +63,11 @@ dependencies {
 
     /** accompanist辅助插件 */
     implementation "com.google.accompanist:accompanist-insets:$accompanistVersion"
-    implementation "com.google.accompanist:accompanist-coil:0.12.0"
+    implementation "com.google.accompanist:accompanist-coil:0.15.0"
     //系统ui控制器
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
     //glide
-    implementation "com.google.accompanist:accompanist-glide:0.12.0"
+    implementation "com.google.accompanist:accompanist-glide:0.15.0"
     //viewPager
     implementation "com.google.accompanist:accompanist-pager:$accompanistVersion"
     implementation "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion"

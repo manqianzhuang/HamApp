@@ -64,19 +64,14 @@ fun LoginPage(
     rememberSaveable(userAccount, userPassword, saver = accountSaver) { }
 
     if (isLogin) {
-        navCtrl.back()
+        navCtrl.popBackStack()
+        viewModel.isLogin.value = false
     }
 
     //SnackBar弹窗显示信息
     if (errorMessage!=null) {
-        coroutineState.launch {
-            scaffoldState
-                .snackbarHostState
-                .showSnackbar(
-                    actionLabel = SNACK_ERROR,
-                    message = errorMessage!!
-                )
-        }
+        popupSnackBar(coroutineState, scaffoldState, label = SNACK_ERROR, errorMessage!!)
+        viewModel.errorMessage.value = null
     }
 
     LazyColumn(

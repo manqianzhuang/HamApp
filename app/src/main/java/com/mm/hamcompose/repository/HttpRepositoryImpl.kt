@@ -88,11 +88,11 @@ class HttpRepositoryImpl constructor(private val apiService: HttpService): BaseR
     }
 
     //福利
-    override suspend fun getWelfareData(page: Int): Flow<HttpResult<WelfareBean>> {
+    override suspend fun getWelfareData(page: Int, pageSize: Int): Flow<HttpResult<WelfareBean>> {
         return flow {
             val result =  try {
-                val response = apiService.getWelfareList("福利", 20, page)
-                if (response.results!=null) {
+                val response = apiService.getWelfareList("Girl", "Girl", page, pageSize)
+                if (response.data != null) {
                     HttpResult.Success(response)
                 } else {
                     throw Exception("the result of remote's request is null")
@@ -165,14 +165,14 @@ class HttpRepositoryImpl constructor(private val apiService: HttpService): BaseR
     /** 未读消息 */
     override fun getUnreadMessages() = pager(initKey = 1) { page -> apiService.getUnreadMessage(page) }
     /** 已读消息 */
-    override fun getReadedMessages() = pager(initKey = 1) { page -> apiService.getUnreadMessage(page) }
+    override fun getReadedMessages() = pager(initKey = 1) { page -> apiService.getReadedMessage(page) }
 
     /** 看妹纸*/
     override fun getWelfareData(key: String): PagingWelfare {
         return Pager(
             config = PagingFactory().pagingConfig,
             pagingSourceFactory = {
-                GirlPhotoPagingSource(apiService, key)
+                GirlPhotoPagingSource(apiService)
             }
         ).flow
     }

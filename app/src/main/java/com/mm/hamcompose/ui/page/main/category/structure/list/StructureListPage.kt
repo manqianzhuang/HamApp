@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
@@ -34,6 +35,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.mm.hamcompose.data.bean.Article
 import com.mm.hamcompose.data.bean.ParentBean
 import com.mm.hamcompose.theme.HamTheme
 import com.mm.hamcompose.theme.ToolBarHeight
@@ -42,6 +44,8 @@ import com.mm.hamcompose.ui.route.RouteUtils
 import com.mm.hamcompose.ui.route.RouteUtils.back
 import com.mm.hamcompose.ui.widget.MediumTitle
 import com.mm.hamcompose.ui.widget.MultiStateItemView
+import com.mm.hamcompose.ui.widget.SNACK_INFO
+import com.mm.hamcompose.ui.widget.popupSnackBar
 
 internal const val TIPS_TEXT = "输入作者名称"
 
@@ -50,6 +54,7 @@ internal const val TIPS_TEXT = "输入作者名称"
 fun StructureListPage(
     parent: ParentBean?,
     navCtrl: NavHostController,
+    scaffoldState: ScaffoldState,
     viewModel: StructureListViewModel = hiltViewModel()
 ) {
     parent ?: return
@@ -58,12 +63,21 @@ fun StructureListPage(
 
     var isShowInput by remember { mutableStateOf(false) }
     val authorName by remember { viewModel.authorName }
+    val message by remember { viewModel.message }
     val articles = viewModel.articles.value?.collectAsLazyPagingItems()
     val refreshing by remember { viewModel.isRefreshing }
     val swipeRefreshState = rememberSwipeRefreshState(refreshing)
     val currentPosition by remember { viewModel.currentListIndex }
     val listState = rememberLazyListState(currentPosition)
     val keyboard = LocalSoftwareKeyboardController.current
+
+    val coroutineScope = rememberCoroutineScope()
+
+    if (message.isNotEmpty()) {
+        popupSnackBar(coroutineScope, scaffoldState, SNACK_INFO, message)
+        viewModel.message.value = ""
+    }
+
 
     Column {
         if (isShowInput) {
@@ -94,10 +108,10 @@ fun StructureListPage(
                     )
                 }
         ) {
-            if (articles != null) {
-                LazyColumn(
-                    state = listState,
-                ) {
+            LazyColumn(
+                state = listState,
+            ) {
+                if (articles != null && articles.itemCount > 0) {
                     itemsIndexed(articles) { index, item ->
                         MultiStateItemView(
                             data = item!!,
@@ -119,6 +133,10 @@ fun StructureListPage(
                             onUserClick = { userId ->
                                 RouteUtils.navTo(navCtrl, RouteName.SHARER, userId)
                             })
+                    }
+                } else {
+                    items(5) {
+                        MultiStateItemView(data = Article(), isLoading = true)
                     }
                 }
                 isShowInput = listState.firstVisibleItemIndex <= 0

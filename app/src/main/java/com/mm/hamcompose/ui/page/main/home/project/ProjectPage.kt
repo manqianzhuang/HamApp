@@ -1,38 +1,31 @@
 package com.mm.hamcompose.ui.page.main.home.project
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
-import com.google.accompanist.coil.rememberCoilPainter
-import com.google.accompanist.imageloading.ImageLoadState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.mm.hamcompose.R
 import com.mm.hamcompose.data.bean.Article
 import com.mm.hamcompose.data.bean.ParentBean
 import com.mm.hamcompose.data.bean.WebData
-import com.mm.hamcompose.theme.H4
-import com.mm.hamcompose.theme.H6
 import com.mm.hamcompose.theme.HamTheme
 import com.mm.hamcompose.theme.ListTitleHeight
 import com.mm.hamcompose.ui.route.RouteName
@@ -40,13 +33,15 @@ import com.mm.hamcompose.ui.route.RouteUtils
 import com.mm.hamcompose.ui.widget.*
 import com.mm.hamcompose.util.RegexUtils
 
+private const val Newest = "最新"
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProjectPage(
     navCtrl: NavHostController,
+    scaffoldState: ScaffoldState,
     viewModel: ProjectViewModel = hiltViewModel(),
-    onScrollChangeListener: (position: Int)-> Unit,
+    onScrollChangeListener: (position: Int) -> Unit,
 ) {
 
     viewModel.start()
@@ -54,10 +49,19 @@ fun ProjectPage(
     val refreshing by remember { viewModel.isRefreshing }
     val currentListPosition by remember { viewModel.currentListIndex }
     val currentRowPosition by remember { viewModel.currentRowIndex }
+    val message by remember { viewModel.message }
     val projects = viewModel.pagingData.value?.collectAsLazyPagingItems()
+    val isLoaded = projects?.loadState?.prepend?.endOfPaginationReached ?: false
     val swipeRefreshState = rememberSwipeRefreshState(refreshing)
     val rowListState = rememberLazyListState(currentRowPosition)
     val listState = rememberLazyListState(currentListPosition)
+
+    val coroutineScope = rememberCoroutineScope()
+
+    if (message.isNotEmpty()) {
+        popupSnackBar(coroutineScope, scaffoldState, SNACK_INFO, message)
+        viewModel.message.value = ""
+    }
 
     Column {
         LabelList(viewModel, rowListState) { data, position ->
@@ -74,19 +78,40 @@ fun ProjectPage(
                 viewModel.refresh()
             },
         ) {
-            if (projects != null) {
-                LazyColumn(
-                    state = listState
-                ) {
-                    itemsIndexed(projects) { position, item ->
-                        ProjectItem(item!!) {
-                            viewModel.savePosition(listState.firstVisibleItemIndex)
-                            val webData = WebData(item.title, item.link!!)
-                            RouteUtils.navTo(navCtrl, RouteName.WEB_VIEW, webData)
+            LazyColumn(state = listState) {
+                if (isLoaded) {
+                    if (projects!!.itemCount > 0) {
+                        itemsIndexed(projects) { index, item ->
+                            ProjectItem(
+                                project = item!!,
+                                onClick = {
+                                    viewModel.savePosition(listState.firstVisibleItemIndex)
+                                    val webData = WebData(item.title, item.link!!)
+                                    RouteUtils.navTo(navCtrl, RouteName.WEB_VIEW, webData)
+                                },
+                                onFavouriteClick = { projectId ->
+                                    if (item.collect) {
+                                        viewModel.uncollectArticleById(projectId)
+                                        projects.peek(index)?.collect = false
+                                    } else {
+                                        viewModel.collectArticleById(projectId)
+                                        projects.peek(index)?.collect = true
+                                    }
+                                }
+                            )
                         }
+                        onScrollChangeListener(listState.firstVisibleItemIndex)
+                    } else {
+                        item { EmptyView() }
+                    }
+                } else {
+                    items(5) {
+                        ProjectItem(
+                            project = Article(),
+                            isLoading = true
+                        )
                     }
                 }
-                onScrollChangeListener(listState.firstVisibleItemIndex)
             }
         }
     }
@@ -105,8 +130,8 @@ fun LabelList(
 
     if (category.isNotEmpty()) {
 
-        if (category[0].name != "热门") {
-            category.add(0, ParentBean(null, id = -1, name = "热门"))
+        if (category[0].name != Newest) {
+            category.add(0, ParentBean(null, id = -1, name = Newest))
         }
 
         LazyRow(
@@ -137,37 +162,31 @@ fun LabelList(
 
 
 @Composable
-private fun ProjectItem(project: Article, onClick: () -> Unit) {
+private fun ProjectItem(
+    project: Article,
+    onClick: () -> Unit = {},
+    onFavouriteClick: (id: Int) -> Unit = {},
+    isLoading: Boolean = false
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
             .padding(5.dp)
-            .clickable {
+            .clickable(enabled = !isLoading) {
                 onClick.invoke()
             }
     ) {
 
         Row {
-            Box(modifier = Modifier.width(100.dp)) {
-                val painter = rememberCoilPainter(
-                    request = project.envelopePic!!,
-                    fadeIn = true,
-                    previewPlaceholder = R.drawable.no_banner
-                )
-                Image(
-                    painter = painter,
-                    contentDescription = "Project Image",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.fillMaxSize()
-                )
-                if (painter.loadState == ImageLoadState.Empty) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = HamTheme.colors.themeUi
-                    )
-                }
-            }
+            NetworkImage(
+                url = project.envelopePic!!,
+                isLoading = isLoading,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .width(100.dp)
+                    .fillMaxHeight()
+            )
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -177,35 +196,75 @@ private fun ProjectItem(project: Article, onClick: () -> Unit) {
                 MainTitle(
                     title = project.title ?: "标题",
                     color = HamTheme.colors.textPrimary,
-                    maxLine = 2
+                    maxLine = 2,
+                    modifier = Modifier.fillMaxWidth(),
+                    isLoading = isLoading
                 )
                 TextContent(
                     text = project.desc ?: "内容",
-                    maxLines = 5,
+                    maxLines = 4,
                     color = HamTheme.colors.textSecondary,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                        .fillMaxWidth()
+                        .weight(1f),
+                    isLoading = isLoading
                 )
-                Box(
-                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
                 ) {
-                    Row(modifier = Modifier.align(Alignment.CenterStart)) {
-                        UserIcon(modifier = Modifier.align(Alignment.CenterVertically))
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .weight(1f)
+                    ) {
+                        UserIcon(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            isLoading = isLoading
+                        )
                         MiniTitle(
                             text = project.author!!,
                             color = HamTheme.colors.textSecondary,
-                            modifier = Modifier.padding(end = 5.dp).align(Alignment.CenterVertically)
+                            modifier = Modifier
+                                .padding(start = 5.dp)
+                                .fillMaxWidth()
+                                .align(Alignment.CenterVertically),
+                            isLoading = isLoading
                         )
                     }
 
-                    Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                        TimerIcon(modifier = Modifier.align(Alignment.CenterVertically))
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .align(Alignment.CenterVertically)
+                            .weight(1f)
+                    ) {
+
+                        TimerIcon(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            isLoading = isLoading
+                        )
                         MiniTitle(
-                            text = RegexUtils().timestamp(project.niceDate) ?: "2020-02",
+                            text = RegexUtils().timestamp(project.niceDate) ?: "",
                             color = HamTheme.colors.textSecondary,
-                            modifier = Modifier.width(80.dp).align(Alignment.CenterVertically),
+                            modifier = Modifier
+                                .padding(start = 5.dp)
+                                .fillMaxWidth()
+                                .align(Alignment.CenterVertically),
                             maxLines = 1,
+                            isLoading = isLoading,
                         )
                     }
+
+                    FavouriteIcon(
+                        isFavourite = project.collect,
+                        onClick = {
+                            onFavouriteClick.invoke(project.id)
+                        },
+                        isLoading = isLoading
+                    )
 
                 }
             }

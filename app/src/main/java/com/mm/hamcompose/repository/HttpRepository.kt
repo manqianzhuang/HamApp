@@ -56,7 +56,7 @@ interface HttpRepository {
     suspend fun getBasicUserInfo(): BASIC_USERINFO
 
     //干货 gank.io的妹纸福利列表
-    suspend fun getWelfareData(page: Int): WELFARE
+    suspend fun getWelfareData(page: Int, pageSize: Int): WELFARE
 
     //分页请求
     fun getIndexData(): PagingArticle

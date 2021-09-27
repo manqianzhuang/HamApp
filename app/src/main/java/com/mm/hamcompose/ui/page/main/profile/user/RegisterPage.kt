@@ -22,10 +22,7 @@ import androidx.navigation.NavHostController
 import com.mm.hamcompose.theme.HamTheme
 import com.mm.hamcompose.theme.ToolBarHeight
 import com.mm.hamcompose.ui.route.RouteUtils.back
-import com.mm.hamcompose.ui.widget.HamButton
-import com.mm.hamcompose.ui.widget.LoginEditView
-import com.mm.hamcompose.ui.widget.MediumTitle
-import com.mm.hamcompose.ui.widget.SNACK_ERROR
+import com.mm.hamcompose.ui.widget.*
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -54,14 +51,8 @@ fun RegisterPage(
 
     //SnackBar弹窗显示信息
     if (errorMessage!=null) {
-        coroutineState.launch {
-            scaffoldState
-                .snackbarHostState
-                .showSnackbar(
-                    actionLabel = SNACK_ERROR,
-                    message = errorMessage!!
-                )
-        }
+        popupSnackBar(coroutineState, scaffoldState, label = SNACK_ERROR, errorMessage!!)
+        viewModel.errorMessage.value = null
     }
 
     LazyColumn(

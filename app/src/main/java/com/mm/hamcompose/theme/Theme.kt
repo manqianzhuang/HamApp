@@ -20,6 +20,7 @@ private val DarkColorPalette = HamColors(
     textPrimary = white4,
     textSecondary = grey1,
     mainColor = white,
+    card = white1,
     icon = white4,
     info = info,
     warn = warn,
@@ -40,6 +41,7 @@ private val DarkColorPalette = HamColors(
     textPrimary = black3,
     textSecondary = grey1,
     mainColor = white,
+    card = white1,
     icon = white4,
     info = info,
     warn = warn,
@@ -48,7 +50,7 @@ private val DarkColorPalette = HamColors(
     primaryBtnBg = themeColors[0],
     secondBtnBg = white3,
     hot = red,
-    placeholder = grey1,
+    placeholder = white3,
 )
 var LocalHamColors = compositionLocalOf {
     LightColorPalette
@@ -74,6 +76,7 @@ class HamColors(
     textPrimary: Color,
     textSecondary: Color,
     mainColor: Color,
+    card: Color,
     icon: Color,
     info: Color,
     warn: Color,
@@ -98,6 +101,8 @@ class HamColors(
         private set
     var mainColor: Color by mutableStateOf(mainColor)
         internal set
+    var card: Color by mutableStateOf(card)
+        private set
     var icon: Color by mutableStateOf(icon)
         private set
     var info: Color by mutableStateOf(info)
@@ -144,6 +149,7 @@ fun HamTheme(
     val textPrimary = animateColorAsState(targetColors.textPrimary, TweenSpec(600))
     val textSecondary = animateColorAsState(targetColors.textSecondary, TweenSpec(600))
     val mainColor = animateColorAsState(targetColors.mainColor, TweenSpec(600))
+    val card = animateColorAsState(targetColors.card, TweenSpec(600))
     val icon = animateColorAsState(targetColors.icon, TweenSpec(600))
     val info = animateColorAsState(targetColors.info, TweenSpec(600))
     val warn = animateColorAsState(targetColors.warn, TweenSpec(600))
@@ -161,6 +167,7 @@ fun HamTheme(
         textPrimary = textPrimary.value,
         textSecondary = textSecondary.value,
         mainColor = mainColor.value,
+        card = card.value,
         icon = icon.value,
         primaryBtnBg = primaryBtnBg.value,
         secondBtnBg = secondBtnBg.value,

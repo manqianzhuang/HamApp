@@ -1,4 +1,4 @@
-package com.mm.hamcompose.ui.page.main.profile.share
+package com.mm.hamcompose.ui.page.main.profile.sharer
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +21,7 @@ class SharerViewModel @Inject constructor(private val repo: HttpRepository): Bas
     private val userId = mutableStateOf(-1)
     var isLoadingMore = mutableStateOf(false)
     var hasMore = mutableStateOf(false)
-    var errorMessage = mutableStateOf<String?>(null)
+    var errorMessage = mutableStateOf("")
 
     fun setupUserId(id: Int) {
         this.userId.value = id
@@ -29,13 +29,16 @@ class SharerViewModel @Inject constructor(private val repo: HttpRepository): Bas
 
     override fun start() {
         initThat {
+            startLoading()
             getShareData()
         }
     }
 
     fun nextPage() {
-        page.value += 1
-        getShareData()
+        if (hasMore.value) {
+            page.value += 1
+            getShareData()
+        }
     }
 
     private fun getShareData() {
@@ -46,23 +49,35 @@ class SharerViewModel @Inject constructor(private val repo: HttpRepository): Bas
             } else {
                 repo.getAuthorShareArticles(userId.value, page.value)
             }
-
             call.collectLatest { response ->
-                isLoadingMore.value = false
                 when (response) {
                     is HttpResult.Success -> {
+
                         points.value = response.result.coinInfo
-                        articles.addAll(response.result.shareArticles.datas)
-                        hasMore.value = !response.result.shareArticles.over
+                        response.result.shareArticles.datas.run {
+                            if (!isNullOrEmpty()) {
+                                articles.addAll(this)
+                            }
+                            errorMessage.value = if (isNullOrEmpty()) "啥都没有~" else ""
+                            hasMore.value = !response.result.shareArticles.over && size >= 0
+                        }
+
                     }
                     is HttpResult.Error -> {
                         println(response.exception.message)
-                        errorMessage.value = response.exception.message
+                        errorMessage.value = response.exception.message ?: "未知异常"
                     }
                 }
+                resetStatus()
             }
         }
     }
+
+    private fun resetStatus() {
+        stopLoading()
+        isLoadingMore.value = false
+    }
+
 
     fun deleteMyArticle(id: Int) {
         async {

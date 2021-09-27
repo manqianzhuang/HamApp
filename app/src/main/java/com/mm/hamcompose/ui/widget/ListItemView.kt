@@ -1,6 +1,5 @@
 package com.mm.hamcompose.ui.widget
 
-import android.text.TextUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,23 +9,19 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.accompanist.placeholder.material.placeholder
-import com.mm.hamcompose.R
 import com.mm.hamcompose.data.bean.Article
 import com.mm.hamcompose.data.bean.CollectBean
 import com.mm.hamcompose.data.bean.WebData
@@ -38,6 +33,7 @@ fun ListTitle(
     modifier: Modifier = Modifier,
     title: String,
     subTitle: String = "",
+    isLoading: Boolean = false,
     onSubtitleClick: () -> Unit = {}
 ) {
     Row(
@@ -57,7 +53,8 @@ fun ListTitle(
         )
         MediumTitle(
             title = title,
-            modifier = Modifier.align(Alignment.CenterVertically)
+            modifier = Modifier.align(Alignment.CenterVertically),
+            isLoading = isLoading
         )
         Spacer(modifier = Modifier.weight(1f))
         TextContent(
@@ -66,7 +63,9 @@ fun ListTitle(
                 .padding(end = 10.dp)
                 .clickable {
                     onSubtitleClick.invoke()
-                })
+                },
+            isLoading = isLoading
+        )
     }
 
 }
@@ -74,61 +73,55 @@ fun ListTitle(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CollectListItemView(
-    item: CollectBean,
-    onClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    collect: CollectBean,
+    isLoading: Boolean = false,
+    onClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
             .padding(horizontal = 10.dp, vertical = 5.dp)
             .fillMaxWidth()
             .wrapContentWidth()
-            .clickable { onClick.invoke() }
-            .placeholder(false),
+            .background(color = HamTheme.colors.card)
+            .clickable(enabled = !isLoading) { onClick.invoke() }
     ) {
         ConstraintLayout(
-            modifier = Modifier
-                .background(white1)
-                .padding(20.dp),
+            modifier = Modifier.padding(20.dp)
         ) {
             val (name, publishIcon, publishTime, title, delete) = createRefs()
-            Text(
-                text = if (item.author.isNotEmpty()) item.author else "无名作者",
-                fontSize = 15.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            MediumTitle(
+                title = if (collect.author.isNotEmpty()) collect.author else "无名",
                 modifier = Modifier
-                    .padding(start = 5.dp)
+                    .defaultMinSize(minWidth = 100.dp)
                     .constrainAs(name) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
-                    }
-
+                    },
+                isLoading = isLoading
             )
-            Text(
-                text = item.niceDate,
-                fontSize = 13.sp,
-                modifier = Modifier.constrainAs(publishTime) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                }
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.ic_time),
-                contentDescription = "",
+            MiniTitle(
+                text = RegexUtils().timestamp(collect.niceDate) ?: "2021",
                 modifier = Modifier
-                    .width(15.dp)
-                    .height(15.dp)
+                    .constrainAs(publishTime) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(publishIcon.bottom)
+                    }
+                    .defaultMinSize(minWidth = 40.dp),
+                isLoading = isLoading
+            )
+            TimerIcon(
+                modifier = Modifier
                     .constrainAs(publishIcon) {
                         top.linkTo(parent.top, margin = 2.5.dp)
                         end.linkTo(publishTime.start)
-                    }
+                    },
+                isLoading = isLoading
             )
-            Text(
-                text = item.title,
-                fontSize = 15.sp,
+            TextContent(
+                text = collect.title,
                 maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
@@ -137,22 +130,20 @@ fun CollectListItemView(
                         top.linkTo(name.bottom)
                         end.linkTo(parent.end)
                     },
-                color = HamTheme.colors.textSecondary
+                isLoading = isLoading
             )
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = null,
-                tint = HamTheme.colors.textSecondary,
-                modifier = Modifier
-                    .constrainAs(delete) {
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom)
-                    }
-                    .clickable {
-                        onDeleteClick.invoke()
-                    }
-                    .pointerInteropFilter { false }
-            )
+            if (!isLoading) {
+                DeleteIcon(
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                        .constrainAs(delete) {
+                            top.linkTo(title.bottom)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                        },
+                    onClick = onDeleteClick
+                )
+            }
         }
     }
 }
@@ -160,61 +151,54 @@ fun CollectListItemView(
 @Composable
 fun SimpleListItemView(
     data: Article,
-    onClick: () -> Unit,
-    onCollectClick: (articleId: Int) -> Unit
+    isLoading: Boolean = false,
+    onClick: () -> Unit = {},
+    onCollectClick: (articleId: Int) -> Unit = {},
 ) {
     Card(
         modifier = Modifier
             .padding(horizontal = 10.dp, vertical = 5.dp)
+            .background(color = HamTheme.colors.card)
             .fillMaxWidth()
             .wrapContentWidth()
-            .clickable {
+            .clickable(enabled = !isLoading) {
                 onClick.invoke()
             }
-            .placeholder(false)
     ) {
         ConstraintLayout(
-            modifier = Modifier
-                .background(white1)
-                .padding(20.dp),
+            modifier = Modifier.padding(20.dp),
         ) {
             val (name, publishIcon, publishTime, title, favourite) = createRefs()
-            Text(
-                text = data.author ?: data.shareUser ?: "作者",
-                fontSize = 15.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            MediumTitle(
+                title = data.author ?: data.shareUser ?: "作者",
                 modifier = Modifier
+                    .defaultMinSize(minWidth = 100.dp)
                     .constrainAs(name) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
-                    }
-                    .padding(start = 5.dp)
+                    },
+                isLoading = isLoading
             )
-            Text(
-                text = data.niceDate ?: "1970-1-1",
-                fontSize = 13.sp,
+            MiniTitle(
+                text = RegexUtils().timestamp(data.niceDate) ?: "",
                 modifier = Modifier.constrainAs(publishTime) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
-                }
+                    bottom.linkTo(publishIcon.bottom)
+                },
+                isLoading = isLoading
             )
-            Icon(
-                painter = painterResource(id = R.drawable.ic_time),
-                contentDescription = "",
+            TimerIcon(
                 modifier = Modifier
-                    .width(15.dp)
-                    .height(15.dp)
                     .constrainAs(publishIcon) {
-                        top.linkTo(parent.top, margin = 2.5.dp)
+                        top.linkTo(parent.top)
                         end.linkTo(publishTime.start)
-                    }
+                    },
+                isLoading = isLoading
             )
-            Text(
-                text = data.title ?: "这是标题",
-                fontSize = 15.sp,
+            TextContent(
+                text = data.title ?: "",
                 maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
@@ -223,7 +207,7 @@ fun SimpleListItemView(
                         top.linkTo(name.bottom)
                         end.linkTo(parent.end)
                     },
-                color = HamTheme.colors.textSecondary
+                isLoading = isLoading
             )
             FavouriteIcon(
                 modifier = Modifier.constrainAs(favourite) {
@@ -234,7 +218,8 @@ fun SimpleListItemView(
                 isFavourite = data.collect,
                 onClick = {
                     onCollectClick.invoke(data.id)
-                }
+                },
+                isLoading = isLoading
             )
         }
     }
@@ -247,143 +232,148 @@ fun MultiStateItemView(
     modifier: Modifier = Modifier,
     data: Article,
     isTop: Boolean = false,
-    onSelected: (data: WebData) -> Unit,
-    onCollectClick: (articleId: Int) -> Unit,
-    onUserClick: (userId: Int) -> Unit,
+    onSelected: (data: WebData) -> Unit = {},
+    onCollectClick: (articleId: Int) -> Unit = {},
+    onUserClick: (userId: Int) -> Unit = {},
     isLoading: Boolean = false,
 ) {
     Card(
         modifier = modifier
             .padding(vertical = 5.dp, horizontal = 10.dp)
+            .background(color = HamTheme.colors.card)
             .fillMaxWidth()
-            .clickable {
-                val webData = WebData(data.title!!, data.link!!)
-                onSelected(webData)
-            }
-            .placeholder(isLoading),
+            .clickable(enabled = !isLoading) {
+                onSelected.invoke(WebData(data.title!!, data.link!!))
+            },
         shape = HamShapes.medium,
         backgroundColor = HamTheme.colors.listItem,
     ) {
-        Box {
-            ConstraintLayout(
+        ConstraintLayout(
+            modifier = Modifier.padding(20.dp),
+        ) {
+            val (circleText, name, publishIcon, publishTime, title, chip1, chip2, tag, favourite) = createRefs()
+            Text(
+                text = getFirstCharFromName(data),
                 modifier = Modifier
-                    .background(white1)
-                    .padding(20.dp),
-            ) {
-                val (circleText, name, publishIcon, publishTime, title, chip1, chip2, tag, favourite) = createRefs()
-                Text(
-                    text = getFirstCharFromName(data),
-                    modifier = Modifier
-                        .width(20.dp)
-                        .height(20.dp)
-                        .background(HamTheme.colors.themeUi, shape = RoundedCornerShape(20.dp / 2))
-                        .padding(vertical = 1.dp)
-                        .constrainAs(circleText) {
-                            top.linkTo(parent.top)
-                            start.linkTo(parent.start)
-                        },
-                    textAlign = TextAlign.Center,
-                    fontSize = H7,
-                    color = white1
-                )
-                MediumTitle(
-                    title = getAuthorName(data),
-                    modifier = Modifier
-                        .constrainAs(name) {
-                            top.linkTo(parent.top)
-                            start.linkTo(circleText.end)
-                        }
-                        .padding(start = 5.dp)
-                        .clickable {
-                            onUserClick.invoke(data.userId)
-                        }
-                        .pointerInteropFilter { false }
-                )
-                MiniTitle(
-                    text = RegexUtils().timestamp(data.niceDate!!) ?: "1970-1-1",
-                    modifier = Modifier.constrainAs(publishTime) {
+                    .width(20.dp)
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(20.dp / 2))
+                    .background(color = HamTheme.colors.themeUi)
+                    .constrainAs(circleText) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                    }
+                    .placeholder(
+                        visible = isLoading,
+                        color = HamTheme.colors.placeholder
+                    ),
+                textAlign = TextAlign.Center,
+                fontSize = H6,
+                color = white1,
+            )
+            val titleModifier =
+                if (isLoading) Modifier.width(80.dp) else Modifier.wrapContentWidth()
+            MediumTitle(
+                title = getAuthorName(data),
+                modifier = titleModifier
+                    .constrainAs(name) {
+                        top.linkTo(parent.top)
+                        start.linkTo(circleText.end)
+                    }
+                    .padding(start = 5.dp)
+                    .clickable {
+                        onUserClick.invoke(data.userId)
+                    }
+                    .pointerInteropFilter { false },
+                isLoading = isLoading
+            )
+            val dateModifier =
+                if (isLoading) Modifier.width(80.dp) else Modifier.wrapContentWidth()
+            MiniTitle(
+                text = RegexUtils().timestamp(data.niceDate!!) ?: "1970-1-1",
+                modifier = dateModifier
+                    .constrainAs(publishTime) {
                         top.linkTo(parent.top)
                         end.linkTo(parent.end)
-                    }
-                )
-                TimerIcon(
-                    modifier = Modifier.constrainAs(publishIcon) {
+                    },
+                isLoading = isLoading
+            )
+            TimerIcon(
+                modifier = Modifier
+                    .padding(end = if (isLoading) 5.dp else 0.dp)
+                    .constrainAs(publishIcon) {
                         top.linkTo(parent.top)
                         end.linkTo(publishTime.start)
                         bottom.linkTo(publishTime.bottom)
-                    }
-                )
-                TextContent(
-                    text = data.title ?: "这是标题",
-                    maxLines = 3,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(top = 10.dp, bottom = 20.dp)
-                        .constrainAs(title) {
-                            top.linkTo(circleText.bottom)
-                            end.linkTo(parent.end)
-                        },
-                    color = HamTheme.colors.textSecondary
-                )
-                LabelTextButton(
-                    text = data.superChapterName ?: "热门",
-                    modifier = Modifier
-                        .constrainAs(chip1) {
-                            top.linkTo(title.bottom)
-                            start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom)
-                        },
-                )
-                LabelTextButton(
-                    text = data.chapterName ?: "android",
-                    modifier = Modifier
-                        .constrainAs(chip2) {
-                            top.linkTo(title.bottom)
-                            start.linkTo(chip1.end, margin = 5.dp)
-                            bottom.linkTo(parent.bottom)
-                        },
-                )
-                FavouriteIcon(
-                    modifier = Modifier.constrainAs(favourite) {
-                        top.linkTo(title.bottom)
+                    },
+                isLoading = isLoading
+            )
+            TextContent(
+                text = data.title ?: "",
+                maxLines = 3,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(top = 10.dp, bottom = 20.dp)
+                    .constrainAs(title) {
+                        top.linkTo(circleText.bottom)
                         end.linkTo(parent.end)
+                    },
+                isLoading = isLoading,
+            )
+            LabelTextButton(
+                text = data.superChapterName ?: "热门",
+                modifier = Modifier
+                    .constrainAs(chip1) {
+                        top.linkTo(title.bottom)
+                        start.linkTo(parent.start)
                         bottom.linkTo(parent.bottom)
                     },
-                    isFavourite = data.collect,
-                    onClick = {
-                        onCollectClick.invoke(data.id)
-                    }
-                )
-//                ShareIcon(
-//                    modifier = Modifier
-//                        .padding(end = 5.dp)
-//                        .constrainAs(share) {
-//                            top.linkTo(title.bottom)
-//                            end.linkTo(follow.start)
-//                            bottom.linkTo(parent.bottom)
-//                        }
-//                )
-                Row(
-                    modifier = Modifier.constrainAs(tag) {
+                isLoading = isLoading
+            )
+            LabelTextButton(
+                text = data.chapterName ?: "android",
+                modifier = Modifier
+                    .constrainAs(chip2) {
+                        top.linkTo(title.bottom)
+                        start.linkTo(chip1.end, margin = 5.dp)
+                        bottom.linkTo(parent.bottom)
+                    },
+                isLoading = isLoading,
+            )
+            FavouriteIcon(
+                modifier = Modifier.constrainAs(favourite) {
+                    top.linkTo(title.bottom)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                },
+                isFavourite = data.collect,
+                onClick = {
+                    onCollectClick.invoke(data.id)
+                },
+                isLoading = isLoading
+            )
+            Row(
+                modifier = Modifier
+                    .defaultMinSize(minHeight = 20.dp)
+                    .constrainAs(tag) {
                         top.linkTo(parent.top)
                         start.linkTo(name.end, margin = 5.dp)
                     }
-                ) {
-                    if (isTop) {
-                        HotIcon()
-                    }
-                    if (data.fresh) {
-                        TagView(
-                            tagText = "最新",
-                            modifier = Modifier
-                                .padding(start = 5.dp)
-                                .align(Alignment.CenterVertically)
-                        )
-                    }
+            ) {
+                if (isTop) {
+                    HotIcon()
                 }
-
+                if (data.fresh) {
+                    TagView(
+                        tagText = "最新",
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .align(Alignment.Bottom)
+                    )
+                }
             }
+
         }
     }
 }
@@ -464,17 +454,17 @@ fun ArrowRightListItem(
 }
 
 
-fun getAuthorName(data: Article): String {
-    val emptyAuthor = "作者"
-    return if (TextUtils.isEmpty(data.author)) {
-        data.shareUser ?: emptyAuthor
+fun getAuthorName(data: Article?): String {
+    return if (data?.shareUser.isNullOrEmpty()) {
+        data?.author ?: ""
     } else {
-        data.author ?: emptyAuthor
+        data?.shareUser ?: ""
     }
 }
 
-fun getFirstCharFromName(data: Article): String {
-    return getAuthorName(data).trim().substring(0, 1)
+fun getFirstCharFromName(data: Article?): String {
+    val author = getAuthorName(data)
+    return if (author.isNotEmpty()) author.trim().substring(0, 1) else "?"
 }
 
 

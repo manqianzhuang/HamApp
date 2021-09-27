@@ -21,7 +21,7 @@ class BasePagingSource<T: Any> constructor(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
-        LogUtils.e("当前页 ${params.key}")
+        println("当前页 ${params.key}")
         page = params.key ?: 0
         return when (val response = callDataFromRemoteServer(page)) {
             is HttpResult.Success -> {

@@ -122,7 +122,7 @@ class SplashTimer(
     val onFinished: () -> Unit
 ) : CountDownTimer(5000, 1000) {
     override fun onTick(millisUntilFinished: Long) {
-        LogUtils.i("onTick = $millisUntilFinished")
+        //LogUtils.i("onTick = $millisUntilFinished")
         onTickMillis()
     }
 

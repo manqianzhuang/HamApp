@@ -19,7 +19,7 @@ fun HamSnackBar(data: SnackbarData) {
     Snackbar(
         snackbarData = data,
         backgroundColor = when (data.actionLabel) {
-            SNACK_INFO -> HamTheme.colors.info
+            SNACK_INFO -> HamTheme.colors.themeUi
             SNACK_WARN -> HamTheme.colors.warn
             SNACK_ERROR -> HamTheme.colors.error
             SNACK_SUCCESS -> HamTheme.colors.success

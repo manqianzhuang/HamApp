@@ -9,11 +9,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Icon
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -38,13 +41,16 @@ import com.mm.hamcompose.ui.route.RouteName
 import com.mm.hamcompose.ui.route.RouteUtils
 import com.mm.hamcompose.ui.route.RouteUtils.back
 import com.mm.hamcompose.ui.widget.EmptyView
+import com.mm.hamcompose.ui.widget.SNACK_INFO
 import com.mm.hamcompose.ui.widget.SimpleListItemView
+import com.mm.hamcompose.ui.widget.popupSnackBar
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PublicAccountSearch(
     parent: ParentBean?,
     navCtrl: NavHostController,
+    scaffoldState: ScaffoldState,
     viewModel: PublicAccountSearchViewModel = hiltViewModel(),
 ) {
     parent ?: return
@@ -53,10 +59,19 @@ fun PublicAccountSearch(
     val searchResult = viewModel.searchResult.value?.collectAsLazyPagingItems()
     val searchContent by remember { viewModel.searchContent }
     val refreshing by remember { viewModel.isRefreshing }
+    val message by remember { viewModel.message }
     val swipeRefreshState = rememberSwipeRefreshState(refreshing)
     val keyboardCtrl = LocalSoftwareKeyboardController.current
     val currentPosition by remember { viewModel.currentListIndex }
     val listState = rememberLazyListState(currentPosition)
+
+    val coroutineScope = rememberCoroutineScope()
+
+    if (message.isNotEmpty()) {
+        popupSnackBar(coroutineScope, scaffoldState, SNACK_INFO, message)
+        viewModel.message.value = ""
+    }
+
 
     Column {
         SearchHead(
@@ -105,9 +120,13 @@ fun PublicAccountSearch(
                 }
             }
         } else {
-            EmptyView("输入关键字搜索") {
-                keyboardCtrl?.hide()
-            }
+            EmptyView(
+                tips = "输入关键字搜索",
+                imageVector = Icons.Default.Search,
+                onClick = {
+                    keyboardCtrl?.hide()
+                }
+            )
         }
 
     }

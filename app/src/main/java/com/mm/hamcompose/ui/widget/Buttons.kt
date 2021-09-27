@@ -13,12 +13,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.placeholder.material.placeholder
 import com.mm.hamcompose.theme.HamTheme
 import com.mm.hamcompose.theme.buttonCorner
 import com.mm.hamcompose.theme.buttonHeight
@@ -85,30 +87,36 @@ fun LabelTextButton(
     isSelect: Boolean = true,
     specTextColor: Color? = null,
     cornerValue: Dp = 25.dp / 2,
+    isLoading: Boolean = false,
     onClick: (() -> Unit)? = null,
-    onLongClick: (()-> Unit)? = null
+    onLongClick: (() -> Unit)? = null
 ) {
     Text(
         text = text,
         modifier = modifier
             .height(25.dp)
+            .clip(shape = RoundedCornerShape(cornerValue))
             .background(
-                color = if (isSelect) HamTheme.colors.themeUi else HamTheme.colors.secondBtnBg,
-                shape = RoundedCornerShape(cornerValue)
+                color = if (isSelect && !isLoading) HamTheme.colors.themeUi else HamTheme.colors.secondBtnBg,
             )
             .padding(
                 horizontal = 10.dp,
                 vertical = 3.dp
             )
             .combinedClickable(
+                enabled = !isLoading,
                 onClick = { onClick?.invoke() },
                 onLongClick = { onLongClick?.invoke() }
+            )
+            .placeholder(
+                visible = isLoading,
+                color = HamTheme.colors.placeholder
             ),
         fontSize = 13.sp,
         textAlign = TextAlign.Center,
         color = specTextColor ?: if (isSelect) white1 else HamTheme.colors.textSecondary,
         overflow = TextOverflow.Ellipsis,
-        maxLines = 1
+        maxLines = 1,
     )
 }
 

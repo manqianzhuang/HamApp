@@ -23,6 +23,7 @@ class ProfileViewModel @Inject constructor(
 ) : BaseViewModel<Article>() {
 
     val isLogin = mutableStateOf(false)
+    val isRefresh = mutableStateOf(false)
     val messageCount = mutableStateOf(0)
     var userInfo = mutableStateOf<UserInfo?>(null)
     var page = mutableStateOf(1)
@@ -30,13 +31,18 @@ class ProfileViewModel @Inject constructor(
     val myArticles = mutableStateOf(mutableListOf<Article>())
 
     override fun start() {
-        initThat { checkLoginState() }
+        checkLoginState()
     }
 
     private fun initUserRemoteData() {
         initMessageCount()
         initBasicUserInfo()
         getMyShareArticles()
+    }
+
+    fun refresh() {
+        isRefresh.value = true
+        checkLoginState()
     }
 
     private fun initBasicUserInfo() {
@@ -77,7 +83,6 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-
     private fun checkLoginState() {
         async {
             flow { emit(db.userInfoDao().queryUserInfo()) }
@@ -92,9 +97,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun isNotInit() = userInfo.value==null && myPoints.value==null
+
     private fun getMyShareArticles() {
         async {
             repo.getMyShareArticles(page.value).collectLatest { response ->
+                isRefresh.value = false
                 when (response) {
                     is HttpResult.Success -> {
                         myPoints.value = response.result.coinInfo
@@ -106,6 +114,11 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        println("ProfileViewModel ==> onClear")
     }
 
 }

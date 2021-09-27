@@ -31,8 +31,5 @@ Mvvm, Android Studio ArcticFox
 
 #### TODO
 1. 添加动画 = SUSPEND
-2. 多标题类型的列表下，initialFirstVisibleItemIndex SUSPEND
-3. 收藏时更新状态 100%
-5. 添加Loading = WAIT
 6. 我的消息开发 = WAIT
 

@@ -43,7 +43,7 @@ class StructureListViewModel @Inject constructor(
         }
     }
 
-    fun initArticles() {
+    private fun initArticles() {
         if (articles.value==null) {
             articles.value = getStructureArticles()
             isRefreshing.value = articles.value==null

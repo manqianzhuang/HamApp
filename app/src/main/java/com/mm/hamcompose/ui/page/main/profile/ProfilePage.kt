@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -29,6 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mm.hamcompose.R
 import com.mm.hamcompose.data.bean.MY_USER_ID
 import com.mm.hamcompose.data.bean.PointsBean
@@ -51,6 +54,8 @@ fun ProfilePage(
     val isLogin by remember { viewModel.isLogin }
     val messageCount by remember { viewModel.messageCount }
     var clickJoinUs by remember { mutableStateOf(false) }
+    val refreshState = rememberSwipeRefreshState(viewModel.isRefresh.value)
+    val listState = rememberLazyListState()
 
     Column(
         modifier = Modifier
@@ -60,12 +65,38 @@ fun ProfilePage(
     ) {
 
         if (isLogin && viewModel.userInfo.value != null) {
-            HeaderPart(navCtrl, viewModel, messageCount)
-            ContentPart(navCtrl, viewModel, Modifier.weight(1f))
-            FooterPart(navCtrl, messageCount, onJoinUsClick = {
-                clickJoinUs = true
-            })
+            SwipeRefresh(
+                state = refreshState,
+                onRefresh = { viewModel.refresh() }
+            ) {
+                LazyColumn(state = listState) {
+                    item {
+                        HeaderPart(
+                            navCtrl = navCtrl,
+                            viewModel = viewModel,
+                            messageCount = messageCount
+                        )
+                    }
+                    item {
+                        ContentPart(
+                            navCtrl = navCtrl,
+                            viewModel = viewModel,
+                            modifier = Modifier.defaultMinSize(minHeight = 200.dp)
+                        )
+                    }
+                    item {
+                        FooterPart(
+                            navCtrl = navCtrl,
+                            messageCount = messageCount,
+                            onJoinUsClick = {
+                                clickJoinUs = true
+                            })
+                    }
+                }
+            }
+
         } else {
+            HamToolBar(title = "我的")
             EmptyView(
                 tips = "点击登录",
                 imageVector = Icons.Default.Face
@@ -156,13 +187,13 @@ fun ContentPart(navCtrl: NavHostController, viewModel: ProfileViewModel, modifie
             .padding(top = 20.dp)
     ) {
         if (myArticles.isNotEmpty()) {
-            LazyColumn {
-                stickyHeader { ListTitle(title = "我的文章") }
+            Column {
+                ListTitle(title = "我的文章")
                 var newList = myArticles
                 if (myArticles.size > MAX_SIZE) {
-                    newList = myArticles.subList(0, 4)
+                    newList = myArticles.subList(0, 9)
                 }
-                itemsIndexed(newList) { index, article ->
+                newList.forEachIndexed { index, article ->
                     TextContent(
                         text = "${index + 1}. ${article.title}",
                         modifier = Modifier
@@ -366,24 +397,17 @@ private fun UserInfoItem(myPoints: PointsBean?, userInfo: UserInfo?) {
                 modifier = Modifier.padding(top = 5.dp)
             ) {
                 TagView(
-                    tagText = "Lv${myPoints?.level ?: ""}",
+                    tagText = "Lv${myPoints?.level ?: "99"}",
                     tagBgColor = HamTheme.colors.themeUi,
                     borderColor = HamTheme.colors.textSecondary,
-                    modifier = Modifier.placeholder(
-                        visible = myPoints == null,
-                        color = HamTheme.colors.placeholder
-                    )
+                    isLoading = myPoints == null
                 )
                 TagView(
-                    modifier = Modifier
-                        .padding(start = 5.dp)
-                        .placeholder(
-                            visible = myPoints == null,
-                            color = HamTheme.colors.placeholder
-                        ),
-                    tagText = "积分${myPoints?.coinCount ?: ""}",
+                    modifier = Modifier.padding(start = 5.dp),
+                    tagText = "积分${myPoints?.coinCount ?: "10086"}",
                     tagBgColor = HamTheme.colors.themeUi,
-                    borderColor = HamTheme.colors.textSecondary
+                    borderColor = HamTheme.colors.textSecondary,
+                    isLoading = myPoints == null
                 )
             }
         }

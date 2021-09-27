@@ -23,4 +23,10 @@ class CategoryViewModel @Inject constructor() : BaseViewModel<ParentBean>() {
 
     }
 
+
+    override fun onCleared() {
+        super.onCleared()
+        println("CategoryViewModel ==> onClear")
+    }
+
 }

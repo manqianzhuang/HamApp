@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
+import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -40,6 +41,7 @@ import com.mm.hamcompose.ui.widget.*
 @Composable
 fun SearchPage(
     navCtrl: NavHostController,
+    scaffoldState: ScaffoldState,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
 
@@ -50,8 +52,17 @@ fun SearchPage(
     val history by remember { viewModel.history }
     val searchText by remember { viewModel.searchContent }
     var currentPosition by remember { viewModel.currentListIndex }
+    val message by remember { viewModel.message }
     val keyboardCtrl = LocalSoftwareKeyboardController.current
     val listState = rememberLazyListState(currentPosition)
+
+    val coroutineScope = rememberCoroutineScope()
+
+    if (message.isNotEmpty()) {
+        popupSnackBar(coroutineScope, scaffoldState, SNACK_INFO, message)
+        viewModel.message.value = ""
+    }
+
 
     Column(Modifier.fillMaxSize()) {
 

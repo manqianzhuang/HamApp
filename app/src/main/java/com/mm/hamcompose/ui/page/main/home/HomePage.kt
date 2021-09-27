@@ -67,8 +67,8 @@ fun HomePage(
             onPageSelected(pagerState.currentPage)
             when (page) {
                 0 -> IndexPage(navCtrl, scaffoldState) { viewModel.setCachePosition(0, it) }
-                1 -> SquarePage(navCtrl) { viewModel.setCachePosition(1, it) }
-                2 -> ProjectPage(navCtrl) { viewModel.setCachePosition(2, it) }
+                1 -> SquarePage(navCtrl, scaffoldState) { viewModel.setCachePosition(1, it) }
+                2 -> ProjectPage(navCtrl, scaffoldState) { viewModel.setCachePosition(2, it) }
                 3 -> WenDaPage(navCtrl) {  viewModel.setCachePosition(3, it) }
             }
         }

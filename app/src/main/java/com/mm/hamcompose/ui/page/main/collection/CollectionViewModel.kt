@@ -7,17 +7,20 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.mm.hamcompose.data.bean.ParentBean
 import com.mm.hamcompose.data.bean.TabTitle
+import com.mm.hamcompose.data.db.user.UserInfoDatabase
 import com.mm.hamcompose.data.http.HttpResult
 import com.mm.hamcompose.repository.HttpRepository
 import com.mm.hamcompose.repository.PagingCollect
 import com.mm.hamcompose.ui.page.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
 class CollectionViewModel @Inject constructor(
     private val repo: HttpRepository,
+    private val db: UserInfoDatabase
 ) : BaseViewModel<ParentBean>() {
 
     val titles = mutableStateOf(
@@ -27,27 +30,45 @@ class CollectionViewModel @Inject constructor(
         )
     )
 
-    var pagingArticleCollect = MutableLiveData<PagingCollect?>(null)
+    var collectArticles = MutableLiveData<PagingCollect?>(null)
     var webUrlList = mutableStateOf<MutableList<ParentBean>?>(null)
     var isRefreshing = mutableStateOf(false)
+    var isLogin = mutableStateOf(false)
 
     override fun start() {
-        initThat {
-            getCollectUrlList()
-            getArticles()
+        checkLoginState()
+    }
+
+    private fun checkLoginState() {
+        async {
+            flow { emit(db.userInfoDao().queryUserInfo()) }
+                .flowOn(Dispatchers.IO)
+                .collectLatest { users ->
+                    isLogin.value = users.isNotEmpty()
+                    if (isLogin.value && isNotInit()) {
+                        initData()
+                    }
+                }
         }
     }
 
-    fun refresh() {
-        isRefreshing.value = true
+    private fun isNotInit() = collectArticles.value == null && webUrlList.value == null
+
+    private fun initData() {
         getCollectUrlList()
         getArticles()
     }
 
+    fun refresh() {
+        isRefreshing.value = true
+        webUrlList.value = null
+        collectArticles.value = null
+        checkLoginState()
+    }
+
     private fun getArticles() {
-        pagingArticleCollect.value = null
-        pagingArticleCollect.value = collectList()
-        isRefreshing.value = pagingArticleCollect.value == null
+        collectArticles.value = collectList()
+        isRefreshing.value = collectArticles.value == null
     }
 
     private fun getCollectUrlList() {
@@ -104,5 +125,11 @@ class CollectionViewModel @Inject constructor(
             }
         }
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        println("CollectionViewModel ==> onClear")
+    }
+
 
 }

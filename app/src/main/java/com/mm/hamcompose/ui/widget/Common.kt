@@ -5,13 +5,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -19,7 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,12 +27,11 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.google.accompanist.placeholder.material.placeholder
 import com.mm.hamcompose.R
 import com.mm.hamcompose.data.bean.TabTitle
 import com.mm.hamcompose.theme.*
 import com.mm.hamcompose.ui.route.BottomNavRoute
-import com.mm.hamcompose.ui.route.RouteName
-import com.mm.hamcompose.ui.route.RouteUtils
 
 /**
  * 普通标题栏头部
@@ -70,7 +69,7 @@ fun HamToolBar(
                     color = HamTheme.colors.mainColor,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(10.dp)
+                        .padding(horizontal = 20.dp)
                         .clickable { onRightClick?.invoke() }
                 )
             }
@@ -95,7 +94,7 @@ fun HamToolBar(
                 .padding(horizontal = 40.dp),
             color = HamTheme.colors.mainColor,
             textAlign = TextAlign.Center,
-            fontSize = if (title.length>14) H5 else ToolBarTitleSize,
+            fontSize = if (title.length > 14) H5 else ToolBarTitleSize,
             fontWeight = FontWeight.W500,
             maxLines = 1
         )
@@ -107,7 +106,7 @@ fun HamToolBar(
 @Composable
 fun HomeSearchBar(
     onSearchClick: () -> Unit,
-    onRightIconClick: ()-> Unit,
+    onRightIconClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -183,7 +182,7 @@ fun TextTabBar(
     contentColor: Color = Color.White,
     onTabSelected: ((index: Int) -> Unit)? = null,
     withAdd: Boolean = false,
-    onAddClick: ()-> Unit = { },
+    onAddClick: () -> Unit = { },
 ) {
     Row(
         modifier = modifier
@@ -291,7 +290,6 @@ fun TabBar(
             }
         }
     }
-
 }
 
 @Composable
@@ -317,6 +315,8 @@ fun BottomNavBarView(navCtrl: NavHostController) {
                 label = { Text(text = stringResource(screen.stringId)) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.routeName } == true,
                 onClick = {
+                    println("BottomNavView当前路由 ===> ${currentDestination?.hierarchy?.toList()}")
+                    println("当前路由栈 ===> ${navCtrl.graph.nodes}")
                     if (currentDestination?.route != screen.routeName) {
                         navCtrl.navigate(screen.routeName) {
                             popUpTo(navCtrl.graph.findStartDestination().id) {
@@ -333,9 +333,15 @@ fun BottomNavBarView(navCtrl: NavHostController) {
 
 
 @Composable
-fun EmptyView(tips: String, imageVector: ImageVector? = null, onClick: () -> Unit = {}) {
+fun EmptyView(
+    tips: String = "啥都没有~",
+    imageVector: ImageVector = Icons.Default.Info,
+    onClick: () -> Unit = {}
+) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize(1f)
+            .defaultMinSize(minHeight = 480.dp)
     ) {
         Column(
             Modifier
@@ -344,7 +350,7 @@ fun EmptyView(tips: String, imageVector: ImageVector? = null, onClick: () -> Uni
                 .clickable { onClick.invoke() }
         ) {
             Icon(
-                imageVector = imageVector ?: Icons.Default.Search,
+                imageVector = imageVector,
                 contentDescription = null,
                 tint = HamTheme.colors.textSecondary,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -402,7 +408,8 @@ fun TagView(
     tagText: String,
     tagBgColor: Color = HamTheme.colors.background,
     borderColor: Color = HamTheme.colors.themeUi,
-    tagTextColor: Color = HamTheme.colors.textSecondary
+    tagTextColor: Color = HamTheme.colors.textSecondary,
+    isLoading: Boolean = false,
 ) {
     Box(
         modifier = modifier
@@ -410,13 +417,17 @@ fun TagView(
             .background(color = tagBgColor)
             .clip(RoundedCornerShape(2.dp))
             .border(width = 1.dp, color = borderColor)
+            .placeholder(
+                visible = isLoading,
+                color = HamTheme.colors.placeholder
+            )
     ) {
         MiniTitle(
             text = tagText,
             color = tagTextColor,
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(horizontal = 5.dp, vertical = 0.dp)
+                .padding(horizontal = 5.dp, vertical = 0.dp),
         )
     }
 }
